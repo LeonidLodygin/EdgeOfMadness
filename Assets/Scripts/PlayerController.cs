@@ -51,8 +51,7 @@ public class PlayerController : MonoBehaviour
         var targetSpeed = inputManager.Run ? runSpeed : inputManager.Crouch ? crouchSpeed : walkSpeed;
         if (inputManager.Movement == Vector2.zero) targetSpeed = 0;
 
-        currentVelocity.x = Mathf.Lerp(currentVelocity.x, inputManager.Movement.x * targetSpeed, animationBlendSpeed * Time.fixedDeltaTime);
-        currentVelocity.y = Mathf.Lerp(currentVelocity.y, inputManager.Movement.y * targetSpeed, animationBlendSpeed * Time.fixedDeltaTime);
+        currentVelocity = Vector2.Lerp(currentVelocity, inputManager.Movement * targetSpeed, animationBlendSpeed * Time.fixedDeltaTime);
 
         var velocity = rigidbody.velocity;
         var xVelocityDifference = currentVelocity.x - velocity.x;
