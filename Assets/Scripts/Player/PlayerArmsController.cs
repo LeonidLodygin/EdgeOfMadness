@@ -7,12 +7,16 @@ public class PlayerArmsController : MonoBehaviour
     [SerializeField] private Transform сameraRoot;
     [SerializeField] private Transform сamera;
     private float xRotation;
-    
+    private bool grounded;
+
     private const float walkSpeed = 2f;
     private const float runSpeed = 6f;
     [SerializeField] private float upperLimit = -90f;
     [SerializeField] private float bottomLimit = 90f;
     [SerializeField] private float sensitivity = 100f;
+    [SerializeField] private float jumpForce = 260f;
+    [SerializeField] private float distanceToGround = 0.8f;
+    [SerializeField] private LayerMask Ground;
 
     private void Start()
     {
@@ -22,7 +26,9 @@ public class PlayerArmsController : MonoBehaviour
     
     private void FixedUpdate()
     {
+        GroundCheck();
         Move();
+        Jump();
     }
     
     private void LateUpdate()
@@ -34,18 +40,35 @@ public class PlayerArmsController : MonoBehaviour
     {
         var targetSpeed = inputManager.Run ? runSpeed : walkSpeed;
         if (inputManager.Movement == Vector2.zero) targetSpeed = 0;
-
-        //currentVelocity = Vector2.Lerp(currentVelocity, inputManager.Movement * targetSpeed, Time.fixedDeltaTime);
+        if (!grounded) return;
         var currentVelocity = new Vector3(inputManager.Movement.x, 0, inputManager.Movement.y);
         currentVelocity *= targetSpeed;
         currentVelocity = transform.TransformDirection(currentVelocity);
-
         var velocity = rigidbody.velocity;
         var velocityChange = new Vector3(currentVelocity.x - velocity.x, 0, currentVelocity.z - velocity.z);
 
         rigidbody.AddForce(velocityChange, ForceMode.VelocityChange);
     }
-    
+
+    private void Jump()
+    {
+        if (grounded && inputManager.Jump)
+        {
+            rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        }
+    }
+
+    private void GroundCheck()
+    {
+        RaycastHit hitInfo;
+        if (Physics.Raycast(rigidbody.worldCenterOfMass, Vector3.down, out hitInfo, distanceToGround + 0.1f, Ground))
+        {
+            grounded = true;
+            return;
+        }
+        grounded = false;
+    }
+
     private void CameraMovement()
     {
         var mouseX = inputManager.Look.x;
