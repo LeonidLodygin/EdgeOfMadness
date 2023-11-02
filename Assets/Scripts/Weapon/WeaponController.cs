@@ -12,10 +12,18 @@ public class WeaponController : MonoBehaviour
     public float movementSwayX;
     public float movementSwayY;
     public float movementSwaySmoothing;
+    public float swayAmountA = 1f;
+    public float swayAmountB = 2f;
+    public float swayScale = 100f;
+    public float swayLerpSpeed = 14;
+    public float swayTime;
+    public Vector3 swayPosition;
+    
     
     
     private InputManager inputManager;
     public Animator weaponAnimator;
+    public Transform weaponSway;
 
     private bool isInitialised;
     
@@ -43,8 +51,8 @@ public class WeaponController : MonoBehaviour
     private void LateUpdate()
     {
         if (!isInitialised) return;
-        
-        
+
+        WeaponSway();
         WeaponRotation();
         WeaponAnimator();
     }
@@ -77,5 +85,24 @@ public class WeaponController : MonoBehaviour
     private void WeaponAnimator()
     {
         weaponAnimator.SetBool("isRunning", inputManager.Run);
+    }
+
+    private void WeaponSway()
+    {
+        var targetPosition = LissajousCurve(swayTime, swayAmountA, swayAmountB) / swayScale;
+
+        swayPosition = Vector3.Lerp(swayPosition, targetPosition, Time.smoothDeltaTime * swayLerpSpeed);
+        swayTime += Time.deltaTime;
+        if (swayTime > 6.3f)
+        {
+            swayTime = 0;
+        }
+        
+        weaponSway.localPosition = swayPosition;
+    }
+
+    private Vector3 LissajousCurve(float Time, float A, float B)
+    {
+        return new Vector3(Mathf.Sin(Time), A * Mathf.Sin(B * Time + Mathf.PI));
     }
 }

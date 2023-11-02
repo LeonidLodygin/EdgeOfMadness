@@ -2165,6 +2165,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6502182839619065283, guid: 4cd295f7ae20f9443971368252f0aa73, type: 3}
   m_PrefabInstance: {fileID: 347902434}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &1846777589 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2686128102702705193, guid: 6ef108b314887c94aa9ec16a3cfab221, type: 3}
+  m_PrefabInstance: {fileID: 4888079177402204400}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1874098731 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5465940246521907071, guid: 4cd295f7ae20f9443971368252f0aa73, type: 3}
@@ -2254,6 +2259,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5309774916654375676, guid: 6ef108b314887c94aa9ec16a3cfab221, type: 3}
+      propertyPath: swayScale
+      value: 400
+      objectReference: {fileID: 0}
+    - target: {fileID: 5309774916654375676, guid: 6ef108b314887c94aa9ec16a3cfab221, type: 3}
       propertyPath: controller
       value: 
       objectReference: {fileID: 966623157}
@@ -2269,6 +2278,10 @@ PrefabInstance:
       propertyPath: swayClampY
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 5309774916654375676, guid: 6ef108b314887c94aa9ec16a3cfab221, type: 3}
+      propertyPath: weaponSway
+      value: 
+      objectReference: {fileID: 1846777589}
     - target: {fileID: 5309774916654375676, guid: 6ef108b314887c94aa9ec16a3cfab221, type: 3}
       propertyPath: movementSwayX
       value: 10
