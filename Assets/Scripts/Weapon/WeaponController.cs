@@ -15,7 +15,7 @@ public class WeaponController : MonoBehaviour
     public float swayAmountA = 1f;
     public float swayAmountB = 2f;
     public float swayScale = 100f;
-    public float swayLerpSpeed = 14;
+    public float swayLerpSpeed = 14f;
     public float swayTime;
     public Vector3 swayPosition;
     
@@ -101,8 +101,8 @@ public class WeaponController : MonoBehaviour
         weaponSway.localPosition = swayPosition;
     }
 
-    private Vector3 LissajousCurve(float Time, float A, float B)
+    private static Vector3 LissajousCurve(float time, float a, float b)
     {
-        return new Vector3(Mathf.Sin(Time), A * Mathf.Sin(B * Time + Mathf.PI));
+        return new Vector3(Mathf.Sin(time), a * Mathf.Sin(b * time + Mathf.PI));
     }
 }

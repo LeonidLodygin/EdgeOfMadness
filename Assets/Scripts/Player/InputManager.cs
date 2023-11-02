@@ -11,6 +11,8 @@ public class InputManager : MonoBehaviour
     public Vector2 Look { get; private set; }
     public bool Run { get; private set; }
     public bool Jump { get; private set; }
+
+    public bool Aim { get; private set; }
     //public bool Crouch { get; private set; }
 
     private InputActionMap currentMap;
@@ -18,6 +20,7 @@ public class InputManager : MonoBehaviour
     private InputAction lookAction;
     private InputAction runAction;
     private InputAction jumpAction;
+    private InputAction aimAction;
     //private InputAction crouchAction;
     
     public WeaponController currentWeapon;
@@ -30,21 +33,24 @@ public class InputManager : MonoBehaviour
         lookAction = currentMap.FindAction("Look");
         runAction = currentMap.FindAction("Run");
         jumpAction = currentMap.FindAction("Jump");
+        aimAction = currentMap.FindAction("Aim");
         //crouchAction = currentMap.FindAction("Crouch");
 
         moveAction.performed += OnMove;
         lookAction.performed += OnLook;
         runAction.performed += OnRun;
         jumpAction.performed += OnJump;
+        aimAction.performed += OnAim;
         //crouchAction.performed += OnCrouch;
 
         moveAction.canceled += OnMove;
         lookAction.canceled += OnLook;
         runAction.canceled += OnRun;
         jumpAction.canceled += OnJump;
+        aimAction.canceled += OnAim;
         //crouchAction.canceled += OnCrouch;
 
-        if (currentWeapon) currentWeapon.Initialise(this);
+        if (currentWeapon) { currentWeapon.Initialise(this);}
     }
 
     private void OnMove(InputAction.CallbackContext context)
@@ -62,6 +68,10 @@ public class InputManager : MonoBehaviour
     private void OnJump(InputAction.CallbackContext context)
     {
         Jump = context.ReadValueAsButton();
+    }
+    private void OnAim(InputAction.CallbackContext context)
+    {
+        Aim = context.ReadValueAsButton();
     }
     //private void OnCrouch(InputAction.CallbackContext context)
     //{

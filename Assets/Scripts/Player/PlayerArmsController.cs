@@ -1,9 +1,11 @@
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 
 public class PlayerArmsController : MonoBehaviour
 {
     private Rigidbody rigidbody;
     private InputManager inputManager;
+    [SerializeField] private TwoBoneIKConstraint constraint;
     [SerializeField] private Transform сameraRoot;
     [SerializeField] private Transform сamera;
     private float xRotation;
@@ -18,11 +20,22 @@ public class PlayerArmsController : MonoBehaviour
     [SerializeField] private float jumpForce = 260f;
     [SerializeField] private float distanceToGround = 0.8f;
     [SerializeField] private LayerMask Ground;
+    [SerializeField] private GameObject stepRayUpper;
+    [SerializeField] private GameObject stepRayLower;
+    [SerializeField] private GameObject weapon;
+    private Vector3 originalPos;
+    private Quaternion originalRot;
+    [SerializeField] float stepHeight = 0.3f;
+    [SerializeField] float stepSmooth = 0.1f;
 
     private void Start()
     {
         rigidbody = GetComponent<Rigidbody>();
         inputManager = GetComponent<InputManager>();
+        var position = stepRayUpper.transform.position;
+        stepRayUpper.transform.position = new Vector3(position.x, stepHeight, position.z);
+        originalPos = weapon.transform.localPosition;
+        originalRot = weapon.transform.localRotation;
     }
     
     private void FixedUpdate()
@@ -30,6 +43,8 @@ public class PlayerArmsController : MonoBehaviour
         GroundCheck();
         Move();
         Jump();
+        Aiming();
+        StepClimb();
     }
     
     private void LateUpdate()
@@ -73,6 +88,22 @@ public class PlayerArmsController : MonoBehaviour
         grounded = false;
     }
 
+    private void StepClimb()
+    {
+        var moveDirection = rigidbody.velocity.normalized;
+        moveDirection.y = 0;
+        moveDirection.Normalize();
+        RaycastHit hitLower;
+        if (!Physics.Raycast(stepRayLower.transform.position, moveDirection,
+                out hitLower, 0.1f)) return;
+        RaycastHit hitUpper;
+        if (!Physics.Raycast(stepRayUpper.transform.position,moveDirection,
+                out hitUpper, 0.2f))
+        {
+            rigidbody.position -= new Vector3(0f, -stepSmooth, 0f);
+        }
+    }
+
     private void CameraMovement()
     {
         var mouseX = inputManager.Look.x;
@@ -85,4 +116,15 @@ public class PlayerArmsController : MonoBehaviour
         сamera.localRotation = Quaternion.Euler(xRotation, 0, 0);
         rigidbody.MoveRotation(rigidbody.rotation * Quaternion.Euler(0, mouseX * sensitivity * Time.smoothDeltaTime, 0));
     }
+
+    private void Aiming()
+    {
+        var targetPos = new Vector3(-0.04f, -0.045f, 0.1f);
+        var targetRot = new Quaternion(-0.00137547322f,-0.998535872f,0.0443145595f,0.0309934299f);
+        constraint.weight = Mathf.MoveTowards(constraint.weight, inputManager.Aim ? 1 : 0, 0.05f);
+        weapon.transform.localPosition =
+            Vector3.MoveTowards(weapon.transform.localPosition, inputManager.Aim ? targetPos : originalPos, 0.005f);
+        weapon.transform.localRotation = Quaternion.RotateTowards(weapon.transform.localRotation, inputManager.Aim ? targetRot : originalRot, 2f);
+    }
+
 }
