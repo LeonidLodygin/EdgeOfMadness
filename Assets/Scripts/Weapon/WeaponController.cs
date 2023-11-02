@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class WeaponController : MonoBehaviour
 {
+    [SerializeField] private PlayerArmsController controller;
+    
     public float swayAmount;
     public float swaySmoothing;
     public float swayResetSmoothing;
@@ -13,6 +15,7 @@ public class WeaponController : MonoBehaviour
     
     
     private InputManager inputManager;
+    public Animator weaponAnimator;
 
     private bool isInitialised;
     
@@ -40,6 +43,15 @@ public class WeaponController : MonoBehaviour
     private void LateUpdate()
     {
         if (!isInitialised) return;
+        
+        
+        WeaponRotation();
+        WeaponAnimator();
+    }
+
+    private void WeaponRotation()
+    {
+        weaponAnimator.speed = controller.weaponAnimationSpeed;
          
         var mouseX = inputManager.Look.x;
         var mouseY = inputManager.Look.y;
@@ -60,5 +72,10 @@ public class WeaponController : MonoBehaviour
         
         
         transform.localRotation = Quaternion.Euler(newWeaponRotation + newWeaponMovementRotation);
+    }
+
+    private void WeaponAnimator()
+    {
+        weaponAnimator.SetBool("isRunning", inputManager.Run);
     }
 }

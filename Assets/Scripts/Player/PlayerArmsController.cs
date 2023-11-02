@@ -8,6 +8,7 @@ public class PlayerArmsController : MonoBehaviour
     [SerializeField] private Transform сamera;
     private float xRotation;
     private bool grounded;
+    public float weaponAnimationSpeed;
 
     private const float walkSpeed = 2f;
     private const float runSpeed = 6f;
@@ -45,6 +46,9 @@ public class PlayerArmsController : MonoBehaviour
         currentVelocity *= targetSpeed;
         currentVelocity = transform.TransformDirection(currentVelocity);
         var velocity = rigidbody.velocity;
+        weaponAnimationSpeed = targetSpeed;
+        if (weaponAnimationSpeed > 1)
+            weaponAnimationSpeed = 1;
         var velocityChange = new Vector3(currentVelocity.x - velocity.x, 0, currentVelocity.z - velocity.z);
 
         rigidbody.AddForce(velocityChange, ForceMode.VelocityChange);

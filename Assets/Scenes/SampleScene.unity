@@ -1126,6 +1126,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8191740002585371210, guid: 4cd295f7ae20f9443971368252f0aa73, type: 3}
   m_PrefabInstance: {fileID: 347902434}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &966623157 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4465117929990523509, guid: 6ef108b314887c94aa9ec16a3cfab221, type: 3}
+  m_PrefabInstance: {fileID: 4888079177402204400}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86677c31bd7604f4e837653d97fc712b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &980311595 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -290750445479886849, guid: 4cd295f7ae20f9443971368252f0aa73, type: 3}
@@ -2107,6 +2118,33 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1751303044 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 327036706311645165, guid: 6ef108b314887c94aa9ec16a3cfab221, type: 3}
+  m_PrefabInstance: {fileID: 4888079177402204400}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &1751303046
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1751303044}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 25d56f21ce18e5c4ab5726ec16230d49, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!4 &1756499548 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1564860333797465651, guid: 4cd295f7ae20f9443971368252f0aa73, type: 3}
@@ -2215,6 +2253,38 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5309774916654375676, guid: 6ef108b314887c94aa9ec16a3cfab221, type: 3}
+      propertyPath: controller
+      value: 
+      objectReference: {fileID: 966623157}
+    - target: {fileID: 5309774916654375676, guid: 6ef108b314887c94aa9ec16a3cfab221, type: 3}
+      propertyPath: swayAmount
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5309774916654375676, guid: 6ef108b314887c94aa9ec16a3cfab221, type: 3}
+      propertyPath: swayClampX
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5309774916654375676, guid: 6ef108b314887c94aa9ec16a3cfab221, type: 3}
+      propertyPath: swayClampY
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5309774916654375676, guid: 6ef108b314887c94aa9ec16a3cfab221, type: 3}
+      propertyPath: movementSwayX
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5309774916654375676, guid: 6ef108b314887c94aa9ec16a3cfab221, type: 3}
+      propertyPath: movementSwayY
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5309774916654375676, guid: 6ef108b314887c94aa9ec16a3cfab221, type: 3}
+      propertyPath: weaponAnimator
+      value: 
+      objectReference: {fileID: 1751303046}
+    - target: {fileID: 5309774916654375676, guid: 6ef108b314887c94aa9ec16a3cfab221, type: 3}
+      propertyPath: movementSwaySmoothing
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 8220117922240321502, guid: 6ef108b314887c94aa9ec16a3cfab221, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -2258,7 +2328,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 327036706311645165, guid: 6ef108b314887c94aa9ec16a3cfab221, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1751303046}
   m_SourcePrefab: {fileID: 100100000, guid: 6ef108b314887c94aa9ec16a3cfab221, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
