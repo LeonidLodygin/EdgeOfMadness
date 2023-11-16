@@ -1,6 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.VFX;
 
 public class Weapon_Shoot : MonoBehaviour
 {
@@ -11,27 +12,35 @@ public class Weapon_Shoot : MonoBehaviour
     int impactForce = 30000;
     Transform enemy;
     Transform player;
+    Animator enemyAnimator;
 
-    private float nextTimeToFire = 10f;
+    public VisualEffect muzzleFlash;
+    public Transform firePoint;
 
+
+    private float nextTimeToFire;
     private void Start()
     {
         enemy = GameObject.FindGameObjectWithTag("Enemy1").transform;
         player = GameObject.FindGameObjectWithTag("Player").transform;
+
+        enemyAnimator = enemy.GetComponent<Animator>();
+
     }
     // Update is called once per frame
     void Update()
     {
-        if (Time.time > nextTimeToFire)
+        nextTimeToFire += 1 * Time.deltaTime;
+        if (nextTimeToFire>1.2 && enemyAnimator.GetBool("IsAttacking"))
         {
-            nextTimeToFire = Time.time + 3;
+            nextTimeToFire = 0;
             Shoot();
         }
     }
 
     void Shoot()
     {
-        _particleSystem.Play();
+        muzzleFlash.Play();
         
         RaycastHit hit;
         if (Physics.Raycast(enemy.transform.position, enemy.transform.forward, out hit))
@@ -39,16 +48,19 @@ public class Weapon_Shoot : MonoBehaviour
             Debug.Log(hit.transform.name);
 
             Health target = hit.transform.GetComponent<Health>();
+
             if (target != null)
             {
                 target.TakeDamage(damage);
             }
-
             if (hit.rigidbody != null)
             {
                 /// hit.rigidbody.AddForce(-hit.normal * impactForce);
-                hit.rigidbody.AddForce(-hit.normal * impactForce);
+                hit.rigidbody.AddForceAtPosition(-hit.normal * impactForce, hit.point);
             }
         };
     }
+
+
+
 }

@@ -1,12 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
+
 
 public class Idle_Behavior : StateMachineBehaviour
 {
     float timer;
     Transform player;
-    float chaseRange = 25;
+    float chaseRange = 17;
+
+    float longChaseRange = 25;
+
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
@@ -23,8 +28,17 @@ public class Idle_Behavior : StateMachineBehaviour
         { animator.SetBool("IsPatroling", true); }
         float distance = Vector3.Distance(animator.transform.position, player.position);
         if (distance < chaseRange) 
-        { animator.SetBool("IsChasing", true); } 
-
+        { animator.SetBool("IsChasing", true); }
+        if (distance < longChaseRange)
+        {
+            bool isRunning = Keyboard.current[Key.LeftShift].isPressed;
+            bool isMovingForward_W = Keyboard.current[Key.W].isPressed;
+            bool isMovingForward_Arrow = Keyboard.current[Key.UpArrow].isPressed;
+            if (isRunning && (isMovingForward_W || isMovingForward_Arrow))
+            {
+                animator.SetBool("IsChasing", true);
+            }
+        }
     }
 
     //OnStateExit is called when a transition ends and the state machine finishes evaluating this state
