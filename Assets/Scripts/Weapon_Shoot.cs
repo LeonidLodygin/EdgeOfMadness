@@ -7,12 +7,13 @@ public class Weapon_Shoot : MonoBehaviour
 {
     public ParticleSystem _particleSystem;
 
-    public float damage = 10f;
+    //private float damage = 10f;
     public float range = 100f;
     int impactForce = 30000;
     Transform enemy;
     Transform player;
     Animator enemyAnimator;
+
 
     public VisualEffect muzzleFlash;
     public Transform firePoint;
@@ -51,6 +52,7 @@ public class Weapon_Shoot : MonoBehaviour
 
             if (target != null)
             {
+                float damage = DetectionDemage();
                 target.TakeDamage(damage);
             }
             if (hit.rigidbody != null)
@@ -61,6 +63,19 @@ public class Weapon_Shoot : MonoBehaviour
         };
     }
 
+    float DetectionDemage()
+    {
+        int range = Random.Range(1, 10);
+        if (range <= 1)
+        {
+            return 50f; //попадание в голову
+        }
 
+        else if (range <= 4)
+        {
+            return 25f; //попадание в тело
+        }
+        else { return 10f; } //попадание в руку/ногу
+    }
 
 }
