@@ -8,67 +8,75 @@ using UnityEngine.InputSystem;
 public class PatrolBehavior : StateMachineBehaviour
 {
     float timer;
-    List <Transform> points = new List<Transform> ();
+    List <Transform> points = new List<Transform> (); //это удалится 
     NavMeshAgent agent;
 
-    Transform player;
-    float chaseRange = 17;
-    float longChaseRange = 25;
+    Transform player; //игрок 
+    float chaseRange = 17;  // Максимальное расстояние до начала преследования игрока
+    float longChaseRange = 25; //Расстояние для начала преследования игрока по звуку
 
-    public float range = 25;
-    public Vector3 centerPoint;
+    public float radiusPatrol = 25; //радиус патрулирования бота 
+    public Vector3 centerPointPatrol; //центр сферы, откуда начинается патрулирование 
 
-    // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         timer = 0;
+
+        /// это будет удалено 
         Transform pointsobject = GameObject.FindGameObjectWithTag("Points").transform;
         foreach (Transform t in pointsobject)
         {
             points.Add(t);
         }
+                
         agent = animator.GetComponent<NavMeshAgent>();
 
-        centerPoint = agent.transform.position;
+        // Устанавливаем центральную точку патрулирования в начальную позицию бота
+        centerPointPatrol = agent.transform.position;
 
+        // Проверяем, активен ли и включен ли бот на навигационной сетке
         if (agent.isActiveAndEnabled && agent.isOnNavMesh)
         {
+            // Устанавливаем минимальное расстояние перед ботом перед остановкой
             agent.stoppingDistance = 1.0f; 
-            //agent.SetDestination(points[0].position);
         }
-
+        // Находим игровой объект с тегом "Player" и получаем его компонент Transform
         player = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (agent.isActiveAndEnabled && agent.isOnNavMesh) // Добавлено условие проверки активности и нахождения на NavMesh
+        // Добавлено условие проверки активности и нахождения на NavMesh
+        if (agent.isActiveAndEnabled && agent.isOnNavMesh) 
         {
-            /*
-            if (agent.remainingDistance <= agent.stoppingDistance)
-            {
-                agent.SetDestination(points[Random.Range(0, points.Count)].position);
-            }*/
+            // Проверяем, завершен ли путь до конечной точки
             if (agent.remainingDistance <= agent.stoppingDistance) //done with path
             {
                 Vector3 point;
-                if (RandomPoint(centerPoint, range, out point)) //pass in our centre point and radius of area
+
+                // Генерируем случайную точку в пределах радиуса от центральной точки патрулирования
+                if (RandomPoint(centerPointPatrol, radiusPatrol, out point)) 
                 {
-                    //Debug.DrawRay(point, Vector3.up, Color.blue, 1.0f); //so you can see with gizmos
+                    // Устанавливаем полученную случайную точку в качестве новой цели для бота
                     agent.SetDestination(point);
                 }
             }
+            
+            
             timer += Time.deltaTime;
+            
+            //После 50 секунд бот делает перерыв в патрулировании
             if (timer > 50)
             {
                 animator.SetBool("IsPatroling", false); 
             }
+            
+            //Аналогичные условия на смену расстояния, которые прописаны в скрипте ChaseBehavior 
             float distance = Vector3.Distance(animator.transform.position, player.position);
             if (distance < chaseRange) { 
                 animator.SetBool("IsChasing", true); 
             }
-
             if (distance < longChaseRange)
             {
                 bool isRunning = Keyboard.current[Key.LeftShift].isPressed;
@@ -81,24 +89,31 @@ public class PatrolBehavior : StateMachineBehaviour
             }
         }
     }
+
+
+    // Функция для генерации случайной точки в пределах указанного радиуса патрулирования от заданной центральной точки
+    // center: Центральная точка патрулирования
+    // range: Радиус, в пределах которого должна быть сгенерирована случайная точка
+    // result: Результирующая случайная точка на NavMesh (если успешно сгенерирована).
+    // Возвращает true, если точка успешно сгенерирована и находится на NavMesh, иначе false.
     bool RandomPoint(Vector3 center, float range, out Vector3 result)
     {
+        // Генерируем случайную точку внутри сферы с центром в заданной центральной точке и радиусом
+        Vector3 randomPoint = center + Random.insideUnitSphere * range;
 
-        Vector3 randomPoint = center + Random.insideUnitSphere * range; //random point in a sphere 
+        // Проверяем, находится ли сгенерированная точка на NavMesh
         NavMeshHit hit;
         if (NavMesh.SamplePosition(randomPoint, out hit, 1.0f, NavMesh.AllAreas))
         {
-            //the 1.0f is the max distance from the random point to a point on the navmesh, might want to increase if range is big
-            //or add a for loop like in the documentation
+            // Если успешно, сохраняем позицию точки и возвращаем true
             result = hit.position;
             return true;
         }
-
+        // Если точка не находится на NavMesh, возвращаем false
         result = Vector3.zero;
         return false;
     }
 
-    // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         agent.SetDestination(agent.transform.position);

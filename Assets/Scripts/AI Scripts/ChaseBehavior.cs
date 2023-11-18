@@ -5,41 +5,51 @@ using UnityEngine.AI;
 
 public class ChaseBehaviour : StateMachineBehaviour
 {
-    NavMeshAgent agent;
-    Transform player;
-    float chaseRange = 17;
-    float attackRange = 10;
-    // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
+    NavMeshAgent agent; //бот
+    Transform player; //игрок
+    float chaseRange = 17;  // ћаксимальное рассто€ние до начала преследовани€ игрока
+    float attackRange = 10; // –ассто€ние, на котором начинаетс€ атака
+
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        // ѕолучаем компонент NavMeshAgent, ответственный за управление навигацией бота
         agent = animator.GetComponent<NavMeshAgent>();
+
+        //”величиваем скорость бота во врем€ преследовани€ 
         agent.speed = 3;
 
+        // Ќаходим игровой объект с тегом "Player" и получаем его компонент Transform
         player = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
-    // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        // ”станавливаем, что бот должен двигатьс€ за игроком 
         agent.SetDestination(player.position);
+        //¬ычисл€ем рассто€ние между позицией бота и позицией игрока
         float distance = Vector3.Distance(animator.transform.position, player.position);
 
-
+        // ѕровер€ем, находитс€ ли игрок в пределах дистанции атаки,
+        // если да, устанавливаем состо€ние атаки в true
         if (distance < attackRange) 
         {
             animator.SetBool("IsAttacking", true);
         }
 
+        // ѕровер€ем, находитс€ ли игрок в пределах дистанции преследовани€,
+        // если нет, устанавливаем состо€ние преследовани€ в false
         if (distance > chaseRange)
         {
             animator.SetBool("IsChasing", false);
         }
     }
 
-    // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
+    // ћетод при выходе из состо€ни€ погони
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         agent.SetDestination(agent.transform.position);
+
+        //устанавливаем скорость бота 
         agent.speed = 2;
     }
 }

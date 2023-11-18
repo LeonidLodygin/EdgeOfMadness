@@ -754,7 +754,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 2d3a9763f5cb7fe40acff3087a5b0ce3, type: 3}
       propertyPath: m_Name
-      value: character
+      value: Enemy1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 2d3a9763f5cb7fe40acff3087a5b0ce3, type: 3}
       propertyPath: m_TagString
@@ -1048,9 +1048,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b59c2e9f18087f4193adae1eb91943f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _particleSystem: {fileID: 412158331}
-  damage: 10
-  range: 100
   muzzleFlash: {fileID: 1293359965}
   firePoint: {fileID: 0}
 --- !u!1 &412158328
