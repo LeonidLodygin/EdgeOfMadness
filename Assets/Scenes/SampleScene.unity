@@ -362,7 +362,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2d3a9763f5cb7fe40acff3087a5b0ce3, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -12.298867
+      value: -12.47
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2d3a9763f5cb7fe40acff3087a5b0ce3, type: 3}
       propertyPath: m_LocalRotation.w
@@ -976,9 +976,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2d3a9763f5cb7fe40acff3087a5b0ce3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2024256659}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2d3a9763f5cb7fe40acff3087a5b0ce3, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2024256663}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2d3a9763f5cb7fe40acff3087a5b0ce3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2024256664}
@@ -8116,25 +8113,13 @@ CapsuleCollider:
     m_Bits: 0
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
-  m_ProvidesContacts: 0
+  m_ProvidesContacts: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 1.1668355
   m_Height: 2.4892492
   m_Direction: 0
   m_Center: {x: -0.032425184, y: 0.64576006, z: 0.022690058}
---- !u!114 &2024256663
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2024256658}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 372476377b5a82d4ebe26c228d722bdd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &2024256664
 MonoBehaviour:
   m_ObjectHideFlags: 0

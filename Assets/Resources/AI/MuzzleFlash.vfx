@@ -2921,7 +2921,7 @@ MonoBehaviour:
   attribute: size
   Composition: 0
   AlphaComposition: 0
-  SampleMode: 2
+  SampleMode: 0
   Mode: 1
   ColorMode: 3
   channels: 6

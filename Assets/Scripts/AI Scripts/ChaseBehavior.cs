@@ -38,9 +38,25 @@ public class ChaseBehaviour : StateMachineBehaviour
 
         // Проверяем, находится ли игрок в пределах дистанции преследования,
         // если нет, устанавливаем состояние преследования в false
-        if (distance > chaseRange)
+        RaycastHit hit;
+
+        // Радиус сферы установлен в 5f, что создает объем, в котором проверяется наличие столкновений
+        // Если есть успешное столкновение в пределах заданной дистанции (chaseRange), то данные о столкновении
+        // будут записаны в переменную hit
+        if (Physics.SphereCast(animator.transform.position, 5f, animator.transform.forward, out hit, chaseRange))
         {
+            Debug.Log(hit.transform.name);
+            // Если луч столкнулся, и это не игрок, сбросить флаг преследования
+            if (hit.transform.name != "Player")
+            {
+                animator.SetBool("IsChasing", false);
+            }
+        }
+        else
+        {
+            // Если столкновение не произошло, сбросить флаг преследования
             animator.SetBool("IsChasing", false);
+
         }
     }
 

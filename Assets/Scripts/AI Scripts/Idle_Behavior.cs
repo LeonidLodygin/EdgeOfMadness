@@ -34,10 +34,22 @@ public class Idle_Behavior : StateMachineBehaviour
         // Вычисляем расстояние между позицией бота и позицией игрока
         float distance = Vector3.Distance(animator.transform.position, player.position);
 
-        // Проверяем, находится ли игрок в пределах дистанции для обычного преследования 
-        // если да, устанавливаем состояние преследования в true
-        if (distance < chaseRange) 
-        { animator.SetBool("IsChasing", true); }
+        RaycastHit hit;
+
+        // Радиус сферы установлен в 5f, что создает объем, в котором проверяется наличие столкновений
+        // Если есть успешное столкновение в пределах заданной дистанции (chaseRange), то данные о столкновении
+        // будут записаны в переменную hit
+        if (Physics.SphereCast(animator.transform.position, 5f, animator.transform.forward, out hit, chaseRange))
+        {
+            Debug.Log(hit.transform.name);
+            //Если бот видит нас(т.е. луч попадает в Player и при этом подходящая дистанция, то начинаем преследование) 
+            if (hit.transform.name == "Player")
+            {
+                animator.SetBool("IsChasing", true);
+
+            }
+
+        }
 
         // Проверяем, находится ли игрок в пределах дистанции для распознования по бегу
         if (distance < longChaseRange)

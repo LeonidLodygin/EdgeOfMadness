@@ -8,7 +8,7 @@ using UnityEngine.InputSystem;
 public class PatrolBehavior : StateMachineBehaviour
 {
     float timer;
-    List <Transform> points = new List<Transform> (); //это удалится 
+    //List <Transform> points = new List<Transform> (); //это удалится 
     NavMeshAgent agent;
 
     Transform player; //игрок 
@@ -67,9 +67,29 @@ public class PatrolBehavior : StateMachineBehaviour
             
             //Аналогичные условия на смену расстояния, которые прописаны в скрипте ChaseBehavior 
             float distance = Vector3.Distance(animator.transform.position, player.position);
-            if (distance < chaseRange) { 
-                animator.SetBool("IsChasing", true); 
-            }
+
+            //Создаем сфеерический луч, пускаемый прямо по направлению бота
+            RaycastHit hit;
+
+            // Радиус сферы установлен в 5f, что создает объем, в котором проверяется наличие столкновений
+            // Если есть успешное столкновение в пределах заданной дистанции (chaseRange), то данные о столкновении
+            // будут записаны в переменную hit
+            if (Physics.SphereCast(animator.transform.position,5f, animator.transform.forward, out hit, chaseRange))
+            {
+                Debug.Log(hit.transform.name);
+                //Если бот видит нас(т.е. луч попадает в Player и при этом подходящая дистанция, то начинаем преследование) 
+                if (hit.transform.name == "Player")
+                {
+                    animator.SetBool("IsChasing", true);
+
+                }
+
+            }                    
+            
+            
+            
+            
+            //Это альфа реализация обнаружения по звуку
             if (distance < longChaseRange)
             {
                 bool isRunning = Keyboard.current[Key.LeftShift].isPressed;
@@ -82,8 +102,6 @@ public class PatrolBehavior : StateMachineBehaviour
             }
         }
     }
-
-
     // Функция для генерации случайной точки в пределах указанного радиуса патрулирования от заданной центральной точки
     // center: Центральная точка патрулирования
     // range: Радиус, в пределах которого должна быть сгенерирована случайная точка

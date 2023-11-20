@@ -9,7 +9,7 @@ public class Weapon_Shoot : MonoBehaviour
 
     //public float range = 100f; 
     
-    int impactForce = 30000; // Сила для воздействия на игрока при выстреле в него
+    int impactForce = 3000; // Сила для воздействия на игрока при выстреле в него
 
     Transform enemy; //бот
     Transform player; //игрок
