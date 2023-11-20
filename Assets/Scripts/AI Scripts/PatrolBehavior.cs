@@ -21,14 +21,7 @@ public class PatrolBehavior : StateMachineBehaviour
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         timer = 0;
-
-        /// это будет удалено 
-        Transform pointsobject = GameObject.FindGameObjectWithTag("Points").transform;
-        foreach (Transform t in pointsobject)
-        {
-            points.Add(t);
-        }
-                
+                   
         agent = animator.GetComponent<NavMeshAgent>();
 
         // Устанавливаем центральную точку патрулирования в начальную позицию бота
