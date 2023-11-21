@@ -14,6 +14,8 @@ public class InputManager : MonoBehaviour
 
     public bool Aim { get; private set; }
     //public bool Crouch { get; private set; }
+    
+    public bool Rage { get; private set; }
 
     private InputActionMap currentMap;
     private InputAction moveAction;
@@ -22,6 +24,8 @@ public class InputManager : MonoBehaviour
     private InputAction jumpAction;
     private InputAction aimAction;
     //private InputAction crouchAction;
+    
+    private InputAction rageAction;
     
     public WeaponController currentWeapon;
 
@@ -34,6 +38,7 @@ public class InputManager : MonoBehaviour
         runAction = currentMap.FindAction("Run");
         jumpAction = currentMap.FindAction("Jump");
         aimAction = currentMap.FindAction("Aim");
+        rageAction = currentMap.FindAction("RageAbility");
         //crouchAction = currentMap.FindAction("Crouch");
 
         moveAction.performed += OnMove;
@@ -41,6 +46,7 @@ public class InputManager : MonoBehaviour
         runAction.performed += OnRun;
         jumpAction.performed += OnJump;
         aimAction.performed += OnAim;
+        rageAction.performed += OnRage;
         //crouchAction.performed += OnCrouch;
 
         moveAction.canceled += OnMove;
@@ -48,6 +54,7 @@ public class InputManager : MonoBehaviour
         runAction.canceled += OnRun;
         jumpAction.canceled += OnJump;
         aimAction.canceled += OnAim;
+        rageAction.canceled += OnRage;
         //crouchAction.canceled += OnCrouch;
 
         if (currentWeapon) { currentWeapon.Initialise(this);}
@@ -73,6 +80,10 @@ public class InputManager : MonoBehaviour
     {
         Aim = context.ReadValueAsButton();
     }
+    private void OnRage(InputAction.CallbackContext context)
+    {
+        Rage = context.ReadValueAsButton();
+    }
     //private void OnCrouch(InputAction.CallbackContext context)
     //{
     //    Crouch = context.ReadValueAsButton();
@@ -86,7 +97,7 @@ public class InputManager : MonoBehaviour
     {
         currentMap.Disable();
     }
-    private void HideCursor()
+    private static void HideCursor()
     {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;

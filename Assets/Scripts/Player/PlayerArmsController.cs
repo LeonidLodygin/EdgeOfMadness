@@ -12,7 +12,7 @@ public class PlayerArmsController : MonoBehaviour
     private bool grounded;
     public float weaponAnimationSpeed;
 
-    private const float walkSpeed = 2f;
+    public float walkSpeed = 2f;
     private const float runSpeed = 6f;
     [SerializeField] private float upperLimit = -90f;
     [SerializeField] private float bottomLimit = 90f;
