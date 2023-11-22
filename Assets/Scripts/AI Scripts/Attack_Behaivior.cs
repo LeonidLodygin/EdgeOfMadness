@@ -17,7 +17,8 @@ public class Attack_Behaivior : StateMachineBehaviour
     {
         // Направляем взгляд бота на игрока
         animator.transform.LookAt(player);
-
+        //бот начинает заваливаться при приближении к нему, так что мы замораживаем его положение
+        animator.transform.eulerAngles = new Vector3(0, animator.transform.eulerAngles.y, 0); 
         // Вычисляем расстояние между позицией бота и позицией игрока
         float distance = Vector3.Distance(animator.transform.position, player.position);
     
