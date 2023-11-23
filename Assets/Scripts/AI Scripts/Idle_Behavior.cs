@@ -36,14 +36,14 @@ public class Idle_Behavior : StateMachineBehaviour
 
         RaycastHit hit;
 
-        // –адиус сферы установлен в 5f, что создает объем, в котором провер€етс€ наличие столкновений
+        // куб создает объем, в котором провер€етс€ наличие столкновений
         // ≈сли есть успешное столкновение в пределах заданной дистанции (chaseRange), то данные о столкновении
         // будут записаны в переменную hit
-        if (Physics.SphereCast(animator.transform.position, 5f, animator.transform.forward, out hit, chaseRange))
+        if (Physics.BoxCast(animator.transform.position, new Vector3(7f, 7f, 7f) / 2f, animator.transform.forward, out hit, Quaternion.identity, chaseRange))
         {
             Debug.Log(hit.transform.name);
             //≈сли бот видит нас(т.е. луч попадает в Player и при этом подход€ща€ дистанци€, то начинаем преследование) 
-            if (hit.transform.name == "Player")
+            if (hit.transform.CompareTag("Player"))
             {
                 animator.SetBool("IsChasing", true);
 
