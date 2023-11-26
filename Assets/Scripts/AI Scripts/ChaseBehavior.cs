@@ -45,7 +45,7 @@ public class ChaseBehaviour : StateMachineBehaviour
         // будут записаны в переменную hit
         if (Physics.BoxCast(animator.transform.position, new Vector3(7f, 7f, 7f) / 2f, animator.transform.forward, out hit, Quaternion.identity, chaseRange))
         {
-            Debug.Log(hit.transform.name);
+            //Debug.Log(hit.transform.name);
 
             // Если объект столкнулся и это не игрок, сбросить флаг преследования
             if (!hit.transform.CompareTag("Player"))

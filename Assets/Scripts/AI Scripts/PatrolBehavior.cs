@@ -83,11 +83,7 @@ public class PatrolBehavior : StateMachineBehaviour
                     animator.SetBool("IsChasing", true);
 
                 }
-            }                    
-            
-            
-            
-            
+            }       
             //Это альфа реализация обнаружения по звуку
             if (distance < longChaseRange)
             {
@@ -113,7 +109,7 @@ public class PatrolBehavior : StateMachineBehaviour
 
         // Проверяем, находится ли сгенерированная точка на NavMesh
         NavMeshHit hit;
-        if (NavMesh.SamplePosition(randomPoint, out hit, 1.0f, NavMesh.AllAreas))
+        if (NavMesh.SamplePosition(randomPoint, out hit, 3.0f, NavMesh.AllAreas))
         {
             // Если успешно, сохраняем позицию точки и возвращаем true
             result = hit.position;

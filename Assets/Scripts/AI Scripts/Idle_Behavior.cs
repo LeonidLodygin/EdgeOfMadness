@@ -28,7 +28,7 @@ public class Idle_Behavior : StateMachineBehaviour
         timer += Time.deltaTime;
 
         //Бот начинает патрулирование через 2 секунды
-        if (timer > 2)
+        if (timer > 2)    
         { animator.SetBool("IsPatroling", true); }
 
         // Вычисляем расстояние между позицией бота и позицией игрока
