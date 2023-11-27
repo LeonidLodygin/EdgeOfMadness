@@ -4,18 +4,19 @@ using UnityEngine;
 
 public class EnemyHealth : MonoBehaviour
 {
+    float timer = 0;
     public int health=100;
     public Animator animator;
+    public bool flag = false;
     void Update()
     {
-        if (health <= 0)
+        timer += Time.deltaTime;
+
+        if (timer>10 && !flag)
         {
-            GetComponent<Collider>().enabled = false;
-            animator.SetTrigger("DeathTrig");
-            animator.SetBool("IsPatroling", false);
-            animator.SetBool("IsChasing", false);
-            animator.SetBool("IsAttacking", false);
-            
+            TakeDamage(100);
+            timer = 0;
+            flag = true;
         }
     }
 
