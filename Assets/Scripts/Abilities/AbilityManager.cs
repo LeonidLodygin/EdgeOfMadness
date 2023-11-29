@@ -6,29 +6,28 @@ public class AbilityManager : MonoBehaviour
     public Ability ability;
     private float cooldownTime = 10;
     private float activeTime = 10;
-
-    private enum State
+    
+    public enum State
     {
         ready,
         active,
         cooldown
     }
-
-    private State state = State.ready;
-
+    
+    
     void Update()
     {
-        switch (state)
+        switch (ability.GetState())
         {
-            case State.ready:
-                if (GetComponent<InputManager>().Rage)
+            case Ability.State.ready:
+                if (PressCheck(ability.name))
                 {
                     ability.Activate(gameObject, camera);
-                    state = State.active;
+                    ability.SetState(Ability.State.active);
                     activeTime = ability.activeTime;
                 } 
                 break;
-            case State.active:
+            case Ability.State.active:
                 if (activeTime > 0)
                 {
                     activeTime -= Time.deltaTime;
@@ -36,20 +35,30 @@ public class AbilityManager : MonoBehaviour
                 else
                 {
                     ability.Disable(gameObject, camera);
-                    state = State.cooldown;
+                    ability.SetState(Ability.State.cooldown);
                     cooldownTime = ability.cooldownTime;
                 } 
                 break;
-            case State.cooldown:
+            case Ability.State.cooldown:
                 if (cooldownTime > 0)
                 {
                     cooldownTime -= Time.deltaTime;
                 }
                 else
                 {
-                    state = State.ready;
+                    ability.SetState(Ability.State.ready);
                 } 
                 break;
         }
+    }
+
+    private bool PressCheck(string name)
+    {
+        return name switch
+        {
+            "Rage" => GetComponent<InputManager>().Rage,
+            "Pulling" => GetComponent<InputManager>().Pulling,
+            _ => false
+        };
     }
 }
