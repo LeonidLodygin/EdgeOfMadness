@@ -16,7 +16,7 @@ public class PatrolBehavior : StateMachineBehaviour
     float longChaseRange = 25; //–ассто€ние дл€ начала преследовани€ игрока по звуку
 
     public float radiusPatrol = 25; //радиус патрулировани€ бота 
-    public Vector3 centerPointPatrol; //центр сферы, откуда начинаетс€ патрулирование 
+    public Vector3 centerPointPatrol = new Vector3(-25, 0, 10); //центр сферы, откуда начинаетс€ патрулирование 
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
@@ -25,7 +25,8 @@ public class PatrolBehavior : StateMachineBehaviour
         agent = animator.GetComponent<NavMeshAgent>();
 
         // ”станавливаем центральную точку патрулировани€ в начальную позицию бота
-        centerPointPatrol = agent.transform.position;
+        
+        //centerPointPatrol = agent.transform.position;
 
         // ѕровер€ем, активен ли и включен ли бот на навигационной сетке
         if (agent.isActiveAndEnabled && agent.isOnNavMesh)
@@ -83,11 +84,7 @@ public class PatrolBehavior : StateMachineBehaviour
                     animator.SetBool("IsChasing", true);
 
                 }
-            }                    
-            
-            
-            
-            
+            }       
             //Ёто альфа реализаци€ обнаружени€ по звуку
             if (distance < longChaseRange)
             {
@@ -113,7 +110,7 @@ public class PatrolBehavior : StateMachineBehaviour
 
         // ѕровер€ем, находитс€ ли сгенерированна€ точка на NavMesh
         NavMeshHit hit;
-        if (NavMesh.SamplePosition(randomPoint, out hit, 1.0f, NavMesh.AllAreas))
+        if (NavMesh.SamplePosition(randomPoint, out hit, 3.0f, NavMesh.AllAreas))
         {
             // ≈сли успешно, сохран€ем позицию точки и возвращаем true
             result = hit.position;
