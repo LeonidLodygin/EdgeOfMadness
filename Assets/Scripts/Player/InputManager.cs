@@ -17,6 +17,7 @@ public class InputManager : MonoBehaviour
     
     public bool Rage { get; private set; }
     public bool Pulling { get; private set; }
+    public bool Blink { get; private set; }
 
     private InputActionMap currentMap;
     private InputAction moveAction;
@@ -28,6 +29,7 @@ public class InputManager : MonoBehaviour
     
     private InputAction rageAction;
     private InputAction pullAction;
+    private InputAction blinkAction;
     
     public WeaponController currentWeapon;
 
@@ -42,6 +44,7 @@ public class InputManager : MonoBehaviour
         aimAction = currentMap.FindAction("Aim");
         rageAction = currentMap.FindAction("RageAbility");
         pullAction = currentMap.FindAction("PullAbility");
+        blinkAction = currentMap.FindAction("BlinkAbility");
         //crouchAction = currentMap.FindAction("Crouch");
 
         moveAction.performed += OnMove;
@@ -51,6 +54,7 @@ public class InputManager : MonoBehaviour
         aimAction.performed += OnAim;
         rageAction.performed += OnRage;
         pullAction.performed += OnPulling;
+        blinkAction.performed += OnBlink;
         //crouchAction.performed += OnCrouch;
 
         moveAction.canceled += OnMove;
@@ -60,6 +64,7 @@ public class InputManager : MonoBehaviour
         aimAction.canceled += OnAim;
         rageAction.canceled += OnRage;
         pullAction.canceled += OnPulling;
+        blinkAction.canceled += OnBlink;
         //crouchAction.canceled += OnCrouch;
 
         if (currentWeapon) { currentWeapon.Initialise(this);}
@@ -92,6 +97,10 @@ public class InputManager : MonoBehaviour
     private void OnPulling(InputAction.CallbackContext context)
     {
         Pulling = context.ReadValueAsButton();
+    }
+    private void OnBlink(InputAction.CallbackContext context)
+    {
+        Blink = context.ReadValueAsButton();
     }
     
     //private void OnCrouch(InputAction.CallbackContext context)

@@ -22,8 +22,8 @@ public class AbilityManager : MonoBehaviour
             case Ability.State.ready:
                 if (PressCheck(ability.name))
                 {
-                    ability.Activate(gameObject, camera);
                     ability.SetState(Ability.State.active);
+                    ability.Activate(gameObject, camera);
                     activeTime = ability.activeTime;
                 } 
                 break;
@@ -58,6 +58,7 @@ public class AbilityManager : MonoBehaviour
         {
             "Rage" => GetComponent<InputManager>().Rage,
             "Pulling" => GetComponent<InputManager>().Pulling,
+            "Blink" => GetComponent<InputManager>().Blink,
             _ => false
         };
     }
