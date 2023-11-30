@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
 
 public class ChaseBehaviour : StateMachineBehaviour
 {
@@ -9,6 +11,7 @@ public class ChaseBehaviour : StateMachineBehaviour
     Transform player; //игрок
     float chaseRange = 17;  // Максимальное расстояние до начала преследования игрока
     float attackRange = 10; // Расстояние, на котором начинается атака
+    float longChaseRange = 25; //Расстояние для начала преследования игрока по звуку
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
@@ -50,14 +53,35 @@ public class ChaseBehaviour : StateMachineBehaviour
             // Если объект столкнулся и это не игрок, сбросить флаг преследования
             if (!hit.transform.CompareTag("Player"))
             {
-                animator.SetBool("IsChasing", false);
+                if (!DetectSound(distance, animator))
+                {
+                    animator.SetBool("IsChasing", false);
+                }
             }
         }
         else
         {
             // Если столкновение не произошло, сбросить флаг преследования
-            animator.SetBool("IsChasing", false);
+            if (!DetectSound(distance, animator))
+            {
+                animator.SetBool("IsChasing", false);
+            }
         }
+    }
+    public bool DetectSound(float distance, Animator animator)
+    {
+        if (distance < longChaseRange)
+        {
+
+            bool isRunning = Keyboard.current[Key.LeftShift].isPressed;
+            bool isMovingForward_W = Keyboard.current[Key.W].isPressed;
+            bool isMovingForward_Arrow = Keyboard.current[Key.UpArrow].isPressed;
+            if (isRunning && (isMovingForward_W || isMovingForward_Arrow))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     // Метод при выходе из состояния погони

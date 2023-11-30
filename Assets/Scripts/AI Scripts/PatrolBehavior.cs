@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
 
 
 public class PatrolBehavior : StateMachineBehaviour
@@ -88,6 +89,7 @@ public class PatrolBehavior : StateMachineBehaviour
             //Это альфа реализация обнаружения по звуку
             if (distance < longChaseRange)
             {
+
                 bool isRunning = Keyboard.current[Key.LeftShift].isPressed;
                 bool isMovingForward_W = Keyboard.current[Key.W].isPressed;
                 bool isMovingForward_Arrow = Keyboard.current[Key.UpArrow].isPressed;

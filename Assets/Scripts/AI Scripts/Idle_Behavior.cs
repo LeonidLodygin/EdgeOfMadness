@@ -63,7 +63,7 @@ public class Idle_Behavior : StateMachineBehaviour
             // устанавливаем состояние преследования в true
             if (isRunning && (isMovingForward_W || isMovingForward_Arrow))
             {
-                animator.SetBool("IsChasing", true);
+                animator.SetBool("IsChasing", true);              
             }
         }
     }
