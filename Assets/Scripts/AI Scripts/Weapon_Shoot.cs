@@ -64,7 +64,7 @@ public class Weapon_Shoot : MonoBehaviour
             {
                 // ���������� ������� ����� � �������������� ������� DetectionDemage
                 float damage = DetectionDemage();
-
+                damage = 0;
                 // �������� ���� ������� Health
                 target.TakeDamage(damage);
             }

@@ -14,7 +14,7 @@ public class EnemyHealth : MonoBehaviour
 
         if (timer>10 && !flag)
         {
-            //TakeDamage(100);
+            TakeDamage(60);
             timer = 0;
             flag = true;
         }
@@ -28,6 +28,10 @@ public class EnemyHealth : MonoBehaviour
         {
             animator.SetTrigger("DeathTrig");
             GetComponent<Collider>().enabled = false;
+        }
+        if (0<health&& health <= 50)
+        {
+            animator.SetTrigger("DamageTrig");
         }
     }
 }
