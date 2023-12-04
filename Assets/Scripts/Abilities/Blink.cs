@@ -1,6 +1,8 @@
-using Unity.PlasticSCM.Editor.WebApi;
 using UnityEngine;
 
+/// <summary>
+/// Implementation of short teleportation of the player to the side of the gaze
+/// </summary>
 [CreateAssetMenu]
 public class Blink : Ability
 {
@@ -8,7 +10,7 @@ public class Blink : Ability
     
     public override void Activate(GameObject parent, GameObject camera)
     {
-        RaycastHit hitInfo;
+        /*RaycastHit hitInfo;
         Ray ray = new Ray(camera.transform.position, camera.transform.forward);
         GameObject pointer = Instantiate(obj, Vector3.zero, camera.transform.rotation);
         Debug.Log("Объект создан");
@@ -20,8 +22,7 @@ public class Blink : Ability
                 pointer.transform.position = hitInfo.point;
             }
         }
-        Destroy(pointer);
-        //parent.transform.position += ;
-        //Debug.Log("Hi");
+        Destroy(pointer);*/
+        parent.transform.position = Vector3.zero;
     }
 }

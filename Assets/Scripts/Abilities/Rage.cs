@@ -1,6 +1,9 @@
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
 
+/// <summary>
+/// Realization of rage ability
+/// </summary>
 [CreateAssetMenu]
 public class Rage : Ability
 {

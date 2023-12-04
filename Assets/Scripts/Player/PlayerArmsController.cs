@@ -1,6 +1,9 @@
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
+/// <summary>
+/// Realization of player movement in the game world
+/// </summary>
 public class PlayerArmsController : MonoBehaviour
 {
     private Rigidbody rigidbody;
@@ -52,6 +55,9 @@ public class PlayerArmsController : MonoBehaviour
         CameraMovement();
     }
     
+    /// <summary>
+    /// Character movement by applying a force based on the difference between the current speed and the one received from the input manager
+    /// </summary>
     private void Move()
     {
         var targetSpeed = inputManager.Run ? runSpeed : walkSpeed;
@@ -61,14 +67,20 @@ public class PlayerArmsController : MonoBehaviour
         currentVelocity *= targetSpeed;
         currentVelocity = transform.TransformDirection(currentVelocity);
         var velocity = rigidbody.velocity;
+        
+        // Adjusting the speed of weapon animation to the player's movement speed
         weaponAnimationSpeed = targetSpeed;
         if (weaponAnimationSpeed > 1)
             weaponAnimationSpeed = 1;
+        
         var velocityChange = new Vector3(currentVelocity.x - velocity.x, 0, currentVelocity.z - velocity.z);
 
         rigidbody.AddForce(velocityChange, ForceMode.VelocityChange);
     }
 
+    /// <summary>
+    /// Realizing a jump by applying force to the player
+    /// </summary>
     private void Jump()
     {
         if (grounded && inputManager.Jump)
@@ -77,6 +89,9 @@ public class PlayerArmsController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Function to check if the player is on the surface
+    /// </summary>
     private void GroundCheck()
     {
         RaycastHit hitInfo;
@@ -88,6 +103,9 @@ public class PlayerArmsController : MonoBehaviour
         grounded = false;
     }
 
+    /// <summary>
+    /// Function for realizing the player's stepping over low obstacles
+    /// </summary>
     private void StepClimb()
     {
         var moveDirection = rigidbody.velocity.normalized;
@@ -104,6 +122,9 @@ public class PlayerArmsController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Function for controlling the player's camera
+    /// </summary>
     private void CameraMovement()
     {
         var mouseX = inputManager.Look.x;
@@ -117,6 +138,9 @@ public class PlayerArmsController : MonoBehaviour
         rigidbody.MoveRotation(rigidbody.rotation * Quaternion.Euler(0, mouseX * sensitivity * Time.smoothDeltaTime, 0));
     }
 
+    /// <summary>
+    /// Implementation of aiming by moving the weapon and changing the "weight" of the Two Bone IK constraint component
+    /// </summary>
     private void Aiming()
     {
         var targetPos = new Vector3(-0.04f, -0.045f, 0.1f);

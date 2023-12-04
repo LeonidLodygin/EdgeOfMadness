@@ -1,19 +1,14 @@
 using UnityEngine;
 
+/// <summary>
+/// Handling the player's use of abilities
+/// </summary>
 public class AbilityManager : MonoBehaviour
 {
     [SerializeField] private GameObject camera;
     public Ability ability;
     private float cooldownTime = 10;
     private float activeTime = 10;
-    
-    public enum State
-    {
-        ready,
-        active,
-        cooldown
-    }
-    
     
     void Update()
     {
@@ -52,6 +47,11 @@ public class AbilityManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Checking if the player has activated an ability
+    /// </summary>
+    /// <param name="name">Name of ability</param>
+    /// <returns>True or false</returns>
     private bool PressCheck(string name)
     {
         return name switch

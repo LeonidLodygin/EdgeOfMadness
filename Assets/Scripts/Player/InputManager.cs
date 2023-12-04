@@ -2,7 +2,9 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Interactions;
 
-
+/// <summary>
+/// Handling user input
+/// </summary>
 public class InputManager : MonoBehaviour
 {
     [SerializeField] private PlayerInput playerInput;
@@ -19,6 +21,7 @@ public class InputManager : MonoBehaviour
     public bool Pulling { get; private set; }
     public bool Blink { get; private set; }
 
+    // Move actions
     private InputActionMap currentMap;
     private InputAction moveAction;
     private InputAction lookAction;
@@ -27,6 +30,7 @@ public class InputManager : MonoBehaviour
     private InputAction aimAction;
     //private InputAction crouchAction;
     
+    // Ability actions
     private InputAction rageAction;
     private InputAction pullAction;
     private InputAction blinkAction;
@@ -36,6 +40,7 @@ public class InputManager : MonoBehaviour
     private void Awake()
     {
         HideCursor();
+        
         currentMap = playerInput.currentActionMap;
         moveAction = currentMap.FindAction("Movement");
         lookAction = currentMap.FindAction("Look");
@@ -74,30 +79,37 @@ public class InputManager : MonoBehaviour
     {
         Movement = context.ReadValue<Vector2>();
     }
+    
     private void OnLook(InputAction.CallbackContext context)
     {
         Look = context.ReadValue<Vector2>();
     }
+    
     private void OnRun(InputAction.CallbackContext context)
     {
         Run = context.ReadValueAsButton();
     }
+    
     private void OnJump(InputAction.CallbackContext context)
     {
         Jump = context.ReadValueAsButton();
     }
+    
     private void OnAim(InputAction.CallbackContext context)
     {
         Aim = context.ReadValueAsButton();
     }
+    
     private void OnRage(InputAction.CallbackContext context)
     {
         Rage = context.ReadValueAsButton();
     }
+    
     private void OnPulling(InputAction.CallbackContext context)
     {
         Pulling = context.ReadValueAsButton();
     }
+    
     private void OnBlink(InputAction.CallbackContext context)
     {
         Blink = context.ReadValueAsButton();
@@ -112,10 +124,12 @@ public class InputManager : MonoBehaviour
     {
         currentMap.Enable();
     }
+    
     private void OnDisable()
     {
         currentMap.Disable();
     }
+    
     private static void HideCursor()
     {
         Cursor.visible = false;

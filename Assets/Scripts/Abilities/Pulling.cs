@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
+/// <summary>
+/// Realization of player's pulling of enemies
+/// </summary>
 [CreateAssetMenu]
 public class Pulling : Ability
 {

@@ -1,11 +1,19 @@
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
 
+/// <summary>
+/// Implementation of a trigger for a dead body that affects the mental state of the player
+/// </summary>
 public class TriggerTest : MonoBehaviour
 {
     [SerializeField] private PostProcessVolume volume;
     private LensDistortion lensDistortion;
     private float multiplyer; 
+    
+    /// <summary>
+    /// Check if the player sees the object and apply post processing to the image received by the player
+    /// </summary>
+    /// <param name="other"></param>
     private void OnTriggerStay(Collider other)
     {
         if (GetComponent<Renderer>().isVisible)
@@ -23,6 +31,10 @@ public class TriggerTest : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Function to disable postprocessing when leaving the trigger zone
+    /// </summary>
+    /// <param name="other"></param>
     private void OnTriggerExit(Collider other)
     {
         volume.enabled = false;
