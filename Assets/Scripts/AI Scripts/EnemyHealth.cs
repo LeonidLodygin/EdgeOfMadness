@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyHealth : MonoBehaviour
@@ -29,7 +27,7 @@ public class EnemyHealth : MonoBehaviour
             animator.SetTrigger("DeathTrig");
             GetComponent<Collider>().enabled = false;
         }
-        if (0<health&& health <= 50)
+        if (0<health && health <= 50)
         {
             animator.SetTrigger("DamageTrig");
         }

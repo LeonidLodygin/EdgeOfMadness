@@ -1,104 +1,90 @@
-using NUnit.Framework;
-using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
-using System.Collections.Generic;
-using static UnityEngine.GraphicsBuffer;
 
 public class Hide_Behaviour : StateMachineBehaviour
 {
-    Transform player;
-    NavMeshAgent agent;
+    Transform targetPlayer;
+    NavMeshAgent navMeshAgent;
     public float minPlayerDistance = 100f;
     public float minObstacleHeight = 5.25f;
     public float updateFrequency = 0.1f;
-    private Collider[] colliders = new Collider[10];
-    private Vector3 playerPosition; // 
-
+    private Collider[] nearbyColliders = new Collider[10];
+    private Vector3 playerInitialPosition;
 
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        agent = animator.GetComponent<NavMeshAgent>();
-        player = GameObject.FindGameObjectWithTag("Player").transform;
-        playerPosition = player.position; // Сохраняем позицию игрока при входе в состояние
-
+        navMeshAgent = animator.GetComponent<NavMeshAgent>();
+        targetPlayer = GameObject.FindGameObjectWithTag("Player").transform;
+        playerInitialPosition = targetPlayer.position; // Save player's position upon entering the state
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        // Очистка массива colliders перед каждым сканированием
-        for (int i = 0; i < colliders.Length; i++)
+        // Clear the nearbyColliders array before each scan
+        for (int i = 0; i < nearbyColliders.Length; i++)
         {
-            colliders[i] = null;
+            nearbyColliders[i] = null;
         }
 
+        int detectedHits = Physics.OverlapSphereNonAlloc(navMeshAgent.transform.position, 15f, nearbyColliders);
 
-        int hits = Physics.OverlapSphereNonAlloc(agent.transform.position, 15f, colliders);
-
-        // Исключение объектов, которые не подходят как места для спрятывания
-        int hitReduction = 0;
-        for (int i = 0; i < hits; i++)
+        // Exclude objects that are not suitable as hiding places
+        int excludedHitsCount = 0;
+        for (int i = 0; i < detectedHits; i++)
         {
-            if (Vector3.Distance(colliders[i].transform.position, player.position) < minPlayerDistance || colliders[i].bounds.size.y < minObstacleHeight)
+            if (Vector3.Distance(nearbyColliders[i].transform.position, targetPlayer.position) < minPlayerDistance || nearbyColliders[i].bounds.size.y < minObstacleHeight)
             {
-                colliders[i] = null;
-                hitReduction++;
+                nearbyColliders[i] = null;
+                excludedHitsCount++;
             }
         }
-        hits -= hitReduction;
+        detectedHits -= excludedHitsCount;
 
-        // Сортировка массива Colliders для приоритизации мест для спрятывания
-        System.Array.Sort(colliders, ColliderArraySortComparer);
-        // Попытка найти подходящее место для спрятывания
-        for (int i = 0; i < hits; i++)
+        // Sort the nearbyColliders array to prioritize hiding places
+        System.Array.Sort(nearbyColliders, ColliderArraySortComparer);
+
+        // Attempt to find a suitable hiding place
+        for (int i = 0; i < detectedHits; i++)
         {
-            // Попытка найти ближайшую точку на NavMesh к объекту
-            if (NavMesh.SamplePosition(colliders[i].transform.position, out NavMeshHit hit, 7f, agent.areaMask))
+            // Attempt to find the nearest point on the NavMesh to the object
+            if (NavMesh.SamplePosition(nearbyColliders[i].transform.position, out NavMeshHit hit, 7f, navMeshAgent.areaMask))
             {
-                if (colliders[i].gameObject.tag != "wall")
+                if (nearbyColliders[i].gameObject.tag != "wall")
                 {
-                    // Попытка найти ближайший к объекту край NavMesh
-                    if (!NavMesh.FindClosestEdge(hit.position, out hit, agent.areaMask))
-                    {
-                        Debug.LogError($"Unable to find edge close to {hit.position}");
-                    }
+                    // Attempt to find the nearest NavMesh edge to the object
+                    if (!NavMesh.FindClosestEdge(hit.position, out hit, navMeshAgent.areaMask)) { }
 
-                    // Проверка направления края относительно вектора к цели
-                    if (Vector3.Dot(hit.normal, (player.position - hit.position).normalized) < 0)
+                    // Check the direction of the edge relative to the vector to the target
+                    if (Vector3.Dot(hit.normal, (targetPlayer.position - hit.position).normalized) < 0)
                     {
-                        // Установка найденной точки как новой цели для NavMeshAgent
+                        // Set the found point as the new destination for NavMeshAgent
                         animator.SetBool("IsHiding", true);
-                        agent.SetDestination(hit.position);
+                        navMeshAgent.SetDestination(hit.position);
                         break;
                     }
                     else
                     {
-                        // Если предыдущая точка не подходит, пробуем с другой стороны объекта
-                        if (NavMesh.SamplePosition(colliders[i].transform.position - (player.position - hit.position).normalized * 2, out NavMeshHit hit2, 15f, agent.areaMask))
+                        // If the previous point is not suitable, try from the other side of the object
+                        if (NavMesh.SamplePosition(nearbyColliders[i].transform.position - (targetPlayer.position - hit.position).normalized * 2, out NavMeshHit hit2, 15f, navMeshAgent.areaMask))
                         {
-                            // Попытка найти ближайший к объекту край NavMesh (вторая попытка)
-                            if (!NavMesh.FindClosestEdge(hit2.position, out hit2, agent.areaMask))
+                            // Attempt to find the nearest NavMesh edge to the object (second attempt)
+                            if (!NavMesh.FindClosestEdge(hit2.position, out hit2, navMeshAgent.areaMask))
                             {
-                                Debug.LogError($"Unable to find edge close to {hit2.position} (second attempt)");
                             }
 
-                            // Проверка направления края относительно вектора к цели
-                            if (Vector3.Dot(hit2.normal, (player.position - hit2.position).normalized) < 0)
+                            // Check the direction of the edge relative to the vector to the target
+                            if (Vector3.Dot(hit2.normal, (targetPlayer.position - hit2.position).normalized) < 0)
                             {
-                                // Установка найденной точки как новой цели для NavMeshAgent
+                                // Set the found point as the new destination for NavMeshAgent
                                 animator.SetBool("IsHiding", true);
-                                agent.SetDestination(hit2.position);
+                                navMeshAgent.SetDestination(hit2.position);
                                 break;
                             }
                         }
                     }
                 }
-            }
-            else
-            {
-                Debug.LogError($"Unable to find NavMesh near object {colliders[i].name} at {colliders[i].transform.position}");
             }
         }
 
@@ -106,33 +92,30 @@ public class Hide_Behaviour : StateMachineBehaviour
         {
             animator.SetBool("IsAttacking", true);
         }
-
     }
-    public int ColliderArraySortComparer(Collider A, Collider B)
+
+    public int ColliderArraySortComparer(Collider colliderA, Collider colliderB)
     {
-        if (A == null && B != null)
+        if (colliderA == null && colliderB != null)
         {
             return 1;
         }
-        else if (A != null && B == null)
+        else if (colliderA != null && colliderB == null)
         {
             return -1;
         }
-        else if (A == null && B == null)
+        else if (colliderA == null && colliderB == null)
         {
             return 0;
         }
         else
         {
-            return Vector3.Distance(agent.transform.position, A.transform.position).CompareTo(Vector3.Distance(agent.transform.position, B.transform.position));
+            return Vector3.Distance(navMeshAgent.transform.position, colliderA.transform.position).CompareTo(Vector3.Distance(navMeshAgent.transform.position, colliderB.transform.position));
         }
     }
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        
     }
-
-
 }

@@ -1,54 +1,52 @@
-using NUnit.Framework;
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class Health : MonoBehaviour
 {
-    float health = 100f;  //изначальное здоровье игрока 
-    public TextMeshProUGUI playerHealthText; //UI элемент слева внизу 
-    public GameObject bloodOverlay;  // кровь, которая появляется при попадании 
-    
-    //принимает величину урона (amount) и отнимает ее от уровня здоровья игрока
-    public void TakeDamage (float amount)
+    float health = 100f;  // Initial player health 
+    public TextMeshProUGUI playerHealthText; // UI element at the bottom left
+    public GameObject bloodOverlay;  // Blood overlay that appears when hit 
+
+    // Takes the damage amount (amount) and subtracts it from the player's health level
+    public void TakeDamage(float amount)
     {
-        //уменьшение текущего здоровья
+        // Decrease the current health
         health -= amount;
 
-        // Запускаем корутину ShowBlood для отображения эффекта крови при получении урона
-        //StartCoroutine(ShowBlood()); 
-    
-        // Если здоровье меньше нуля, то умираем) 
+        // Start the ShowBlood coroutine to display the blood effect when taking damage
+
+        // StartCoroutine(ShowBlood()); 
+
+        // If health is less than or equal to zero, then die) 
         if (health <= 0)
         {
             Die();
         }
-       
     }
 
-    //отображение эффекта крови на экране
+    // Display blood effect on the screen
     public IEnumerator ShowBlood()
     {
-        //Активируем объект bloodOverlay, который представляет из себя наложение крови на экран
+        // Activate the bloodOverlay object, representing a blood overlay on the screen
         bloodOverlay.SetActive(true);
-        
-        // Ждем полсекунды, чтобы эффект был виден на экране
+
+        // Wait for half a second to make the effect visible on the screen
         yield return new WaitForSeconds(.5f);
-        
-        //Деактивируем объект bloodOverlay
+
+        // Deactivate the bloodOverlay object
         bloodOverlay.SetActive(false);
     }
 
     private void Update()
     {
-        playerHealthText.text = health.ToString(); //обновление уровня здоровья при попадании
+        playerHealthText.text = health.ToString(); // Update the health level when hit
     }
-    
-    //метод смерти - когда уровень здоровья игрока <=0
+
+    // Death method - when the player's health level is <=0
     void Die()
     {
-        SceneManager.LoadScene("SampleScene");  //перезагружаем нашу сцену 
+        SceneManager.LoadScene("SampleScene");  // Reload our scene 
     }
 }

@@ -1,91 +1,80 @@
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Rendering;
 using UnityEngine.VFX;
 
 public class Weapon_Shoot : MonoBehaviour
 {
-    //public float range = 100f; 
-    
-    int impactForce = 3000; // ���� ��� ����������� �� ������ ��� �������� � ����
+    Transform enemy; // Enemy
+    Transform player; // Player
+    Animator enemyAnimator; // Enemy's animator
 
-    Transform enemy; //���
-    Transform player; //�����
-    Animator enemyAnimator; //�������� ����
+    public VisualEffect muzzleFlash; // Visual effect for the muzzle flash
+    public Transform firePoint; // Point from where the shots "fly out"
 
-
-    public VisualEffect muzzleFlash; // ������ ������� ��� ��������
-    public Transform firePoint; // �����, ������ "�����������" ��������
-
-    private float nextTimeToFire; //�������� ����� ���������� 
-
+    private float nextTimeToFire; // Time until the next shot
 
     private void Start()
     {
-        enemy = GameObject.FindGameObjectWithTag("Enemy1").transform; 
+        enemy = GameObject.FindGameObjectWithTag("Enemy1").transform;
         player = GameObject.FindGameObjectWithTag("Player").transform;
         enemyAnimator = enemy.GetComponent<Animator>();
     }
-    
-    
+
     void Update()
     {
-        // ����������� ����� �� ���������� ��������
+        // Increase time since the last shot
         nextTimeToFire += 1 * Time.deltaTime;
 
-        // ���������, ������ �� ���������� ������� � ����������� �������� � ��� � ��������� �����
-        if (nextTimeToFire>1.2)
+        // Check if enough time has passed for the next shot
+        if (nextTimeToFire > 1.2)
         {
-            nextTimeToFire = 0;  // ���������� ����� �� ���������� ��������
-            Shoot(); // �������� ����� ��� ���������� ��������
+            nextTimeToFire = 0;  // Reset time until the next shot
+            Shoot(); // Initiate the shot
         }
     }
 
-    // ������� ��� ���������� ��������, ������� ��������������� ������� �������,
-    // ����������� ��������� � ���������� �����
+    // Method for performing a shot, including the visual flash effect and hit detection
     void Shoot()
     {
-        // ������������� ������ �������� 
+        // Play the visual flash effect
         muzzleFlash.Play();
 
-        // ������� ���, ������� ������������ ����� ����� �� ������� ���� � ����������� ��� ������.
+        // Send a ray determining the hit
         RaycastHit hit;
         if (Physics.Raycast(enemy.transform.position, enemy.transform.forward, out hit))
         {
-            //
-            //Debug.Log(hit.transform.name);
 
-            // �������� ��������� Health �������, � ������� ����� ���
+            // Get the Health component of the target, if available
             Health target = hit.transform.GetComponent<Health>();
 
-            // ���� � ������� ���� ��������� Health, ��������� ���� (������������, ����, ���� �� ������ � ������)
+            // If the target has a Health component, inflict damage (randomly determined)
             if (target != null)
             {
-                // ���������� ������� ����� � �������������� ������� DetectionDemage
-                float damage = DetectionDemage();
-                // �������� ���� ������� Health
+                // Determine damage using the DetectionDamage method
+                float damage = DetectionDamage();
+                // Inflict damage
                 target.TakeDamage(damage);
             }
         };
     }
 
-    // ������� ��� ����������� ������ ����� � ����������� �� ��������� ������� ���������
-    // ���������� �������� ����� �� ������ ����������� ��������� � ��������� ����� ����
-    float DetectionDemage()
+    // Method to determine damage
+    float DetectionDamage()
     {
         int range = Random.Range(1, 10);
         if (range <= 1)
         {
-            // ���� ��������� � ������, ���������� ������� ������� ����� (50)
-            return 50f; 
+            // Headshot
+            return 50f;
         }
-
         else if (range <= 4)
         {
-            // ���� ��������� � ����, ���������� ������� ������� ����� (25)
-            return 25f; 
+            // Body shot
+            return 25f;
         }
-        else { return 10f; }   // ���� ��������� � ����/����, ���������� ������ ������� ����� (10)
+        else
+        {
+            // Limb shot
+            return 10f;
+        }
     }
-
 }
