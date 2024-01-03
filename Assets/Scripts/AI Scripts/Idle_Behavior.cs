@@ -41,7 +41,7 @@ public class Idle_Behavior : StateMachineBehaviour
         // будут записаны в переменную hit
         if (Physics.BoxCast(animator.transform.position, new Vector3(7f, 7f, 7f) / 2f, animator.transform.forward, out hit, Quaternion.identity, chaseRange))
         {
-            Debug.Log(hit.transform.name);
+            //Debug.Log(hit.transform.name);
             //Если бот видит нас(т.е. луч попадает в Player и при этом подходящая дистанция, то начинаем преследование) 
             if (hit.transform.CompareTag("Player"))
             {
@@ -55,9 +55,6 @@ public class Idle_Behavior : StateMachineBehaviour
         if (distance < longChaseRange)
         {
             // Проверяем, нажата ли клавиша "Shift" (бег), и одновременно нажата ли клавиша движения вперед
-            bool isRunning = Keyboard.current[Key.LeftShift].isPressed;
-            bool isMovingForward_W = Keyboard.current[Key.W].isPressed;
-            bool isMovingForward_Arrow = Keyboard.current[Key.UpArrow].isPressed;
 
             // Если бег активирован и одновременно нажата клавиша движения вперед,
             // устанавливаем состояние преследования в true

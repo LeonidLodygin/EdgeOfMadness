@@ -1,124 +1,146 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Controls;
+using System.IO;
+using System.Collections.Generic;
+using System;
 
-
+[System.Serializable]
 public class PatrolBehavior : StateMachineBehaviour
 {
     float timer;
-    //List <Transform> points = new List<Transform> (); //это удалится 
     NavMeshAgent agent;
+    Transform player; // Player character
+    float chaseRange = 17;  // Maximum distance to start chasing the player
+    float longChaseRange = 25; // Distance to start chasing the player based on sound
 
-    Transform player; //игрок 
-    float chaseRange = 17;  // Максимальное расстояние до начала преследования игрока
-    float longChaseRange = 25; //Расстояние для начала преследования игрока по звуку
+    public float patrolRadius = 25; // Bot patrol radius
+    public Vector3 patrolCenter; // Center of the patrol sphere
+    List<Vector3> previousDetections = new List<Vector3>(); // Positions where the player was detected previously
 
-    public float radiusPatrol = 25; //радиус патрулирования бота 
-    public Vector3 centerPointPatrol = new Vector3(-25, 0, 10); //центр сферы, откуда начинается патрулирование 
+    // Method to get the "average position" for starting patrol
+    Vector3 GetAveragePosition()
+    {
+        float sumX = 0;
+        float sumZ = 0;
+
+        foreach (Vector3 position in previousDetections)
+        {
+            sumX += position.x;
+            sumZ += position.z;
+        }
+
+        if (previousDetections.Count > 0)
+        {
+            float averageX = sumX / previousDetections.Count;
+            float averageY = 0;
+            float averageZ = sumZ / previousDetections.Count;
+
+            return new Vector3(averageX, averageY, averageZ);
+        }
+        else
+        {
+            return Vector3.zero; // Or another default value
+        }
+    }
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         timer = 0;
-                   
+
         agent = animator.GetComponent<NavMeshAgent>();
 
-        // Устанавливаем центральную точку патрулирования в начальную позицию бота
-        
-        centerPointPatrol = agent.transform.position;
+        // Set the center of patrol to the initial position of the bot
+        patrolCenter = agent.transform.position;
 
-        // Проверяем, активен ли и включен ли бот на навигационной сетке
+        // Check if the bot is active and enabled on the navigation mesh
         if (agent.isActiveAndEnabled && agent.isOnNavMesh)
         {
-            // Устанавливаем минимальное расстояние перед ботом перед остановкой
-            agent.stoppingDistance = 1.0f; 
+            // Set the minimum distance in front of the bot before stopping
+            agent.stoppingDistance = 1.0f;
         }
-        // Находим игровой объект с тегом "Player" и получаем его компонент Transform
+
+        // Find the player object with the "Player" tag and get its Transform component
         player = GameObject.FindGameObjectWithTag("Player").transform;
+        LoadPlayerPosition();
+        patrolCenter = GetAveragePosition();
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        // Добавлено условие проверки активности и нахождения на NavMesh
-        if (agent.isActiveAndEnabled && agent.isOnNavMesh) 
+        // Added condition to check activity and being on NavMesh
+        if (agent.isActiveAndEnabled && agent.isOnNavMesh)
         {
-            // Проверяем, завершен ли путь до конечной точки
-            if (agent.remainingDistance <= agent.stoppingDistance) //done with path
+            // Check if the path to the destination is completed
+            if (agent.remainingDistance <= agent.stoppingDistance)
             {
                 Vector3 point;
 
-                // Генерируем случайную точку в пределах радиуса от центральной точки патрулирования
-                if (RandomPoint(centerPointPatrol, radiusPatrol, out point)) 
+                // Generate a random point within the radius from the center of patrol
+                if (RandomPoint(patrolCenter, patrolRadius, out point))
                 {
-                    // Устанавливаем полученную случайную точку в качестве новой цели для бота
+                    // Set the generated random point as a new destination for the bot
                     agent.SetDestination(point);
                 }
             }
-            
-            
+
             timer += Time.deltaTime;
-            
-            //После 50 секунд бот делает перерыв в патрулировании
+
+            // After 50 seconds, the bot takes a break from patrolling
             if (timer > 50)
             {
-                animator.SetBool("IsPatroling", false); 
+                animator.SetBool("IsPatrolling", false);
             }
-            
-            //Аналогичные условия на смену расстояния, которые прописаны в скрипте ChaseBehavior 
+
+            // Similar conditions for changing distance as in the ChaseBehavior script
             float distance = Vector3.Distance(animator.transform.position, player.position);
 
-            //Создаем сфеерический луч, пускаемый прямо по направлению бота
+            // Create a spherical ray cast straight in the direction of the bot
             RaycastHit hit;
 
-            // куб создает объем, в котором проверяется наличие столкновений
-            // Если есть успешное столкновение в пределах заданной дистанции (chaseRange), то данные о столкновении
-            // будут записаны в переменную hit
+            // The cube creates a volume where collisions are checked
+            // If there is a successful collision within the specified distance (chaseRange),
+            // the collision data will be stored in the hit variable
             if (Physics.BoxCast(animator.transform.position, new Vector3(7f, 7f, 7f) / 2f, animator.transform.forward, out hit, Quaternion.identity, chaseRange))
             {
-                Debug.Log(hit.transform.name);
-                //Если бот видит нас(т.е. луч попадает в Player и при этом подходящая дистанция, то начинаем преследование) 
+                // If the bot sees us (i.e., the ray hits the Player and at the appropriate distance), start chasing
                 if (hit.transform.CompareTag("Player"))
                 {
                     animator.SetBool("IsChasing", true);
-
+                    SavePlayerPosition(player.transform.position);
                 }
-            }       
-            //Это альфа реализация обнаружения по звуку
+            }
             if (distance < longChaseRange)
             {
-
-                bool isRunning = Keyboard.current[Key.LeftShift].isPressed;
-                bool isMovingForward_W = Keyboard.current[Key.W].isPressed;
-                bool isMovingForward_Arrow = Keyboard.current[Key.UpArrow].isPressed;
                 if (player.GetComponent<InputManager>().Run)
                 {
                     animator.SetBool("IsChasing", true);
+                    SavePlayerPosition(player.transform.position);
                 }
             }
         }
     }
-    // Функция для генерации случайной точки в пределах указанного радиуса патрулирования от заданной центральной точки
-    // center: Центральная точка патрулирования
-    // range: Радиус, в пределах которого должна быть сгенерирована случайная точка
-    // result: Результирующая случайная точка на NavMesh (если успешно сгенерирована).
-    // Возвращает true, если точка успешно сгенерирована и находится на NavMesh, иначе false.
+
+    // Function to generate a random point within the specified patrol radius from the given central point
+    // center: Central patrol point
+    // range: Radius within which a random point should be generated
+    // result: Resulting random point on the NavMesh (if successfully generated).
+    // Returns true if the point is successfully generated and on the NavMesh, otherwise false.
     bool RandomPoint(Vector3 center, float range, out Vector3 result)
     {
-        // Генерируем случайную точку внутри сферы с центром в заданной центральной точке и радиусом
-        Vector3 randomPoint = center + Random.insideUnitSphere * range;
+        // Generate a random point inside a sphere with a center at the specified central point and a radius
+        Vector3 randomPoint = center + UnityEngine.Random.insideUnitSphere * range;
 
-        // Проверяем, находится ли сгенерированная точка на NavMesh
+        // Check if the generated point is on the NavMesh
         NavMeshHit hit;
         if (NavMesh.SamplePosition(randomPoint, out hit, 3.0f, NavMesh.AllAreas))
         {
-            // Если успешно, сохраняем позицию точки и возвращаем true
+            // If successful, save the position of the point and return true
             result = hit.position;
             return true;
         }
-        // Если точка не находится на NavMesh, возвращаем false
+
+        // If the point is not on the NavMesh, return false
         result = Vector3.zero;
         return false;
     }
@@ -128,5 +150,40 @@ public class PatrolBehavior : StateMachineBehaviour
         agent.SetDestination(agent.transform.position);
     }
 
-   
+    // Save the current player position when detected
+    void SavePlayerPosition(Vector3 position)
+    {
+        // Serialize the object to a JSON string
+        string json = JsonUtility.ToJson(position);
+
+        // Add the JSON string to the existing file
+        string filePath = Path.Combine(Application.persistentDataPath, "playerPosition.json");
+        System.IO.File.AppendAllText(filePath, json + System.Environment.NewLine);
+    }
+
+    // Get the list of player positions from previous detections
+    void LoadPlayerPosition()
+    {
+        string filePath = Path.Combine(Application.persistentDataPath, "playerPosition.json");
+
+        if (System.IO.File.Exists(filePath))
+        {
+            string[] lines = System.IO.File.ReadAllLines(filePath);
+
+            foreach (string line in lines)
+            {
+                if (!string.IsNullOrEmpty(line))
+                {
+                    try
+                    {
+                        Vector3 parsedVector = JsonUtility.FromJson<Vector3>(line);
+                        previousDetections.Add(parsedVector);
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
+        }
+    }
 }

@@ -52,7 +52,8 @@ public class Weapon_Shoot : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(enemy.transform.position, enemy.transform.forward, out hit))
         {
-            Debug.Log(hit.transform.name);
+            //
+            //Debug.Log(hit.transform.name);
 
             // �������� ��������� Health �������, � ������� ����� ���
             Health target = hit.transform.GetComponent<Health>();
