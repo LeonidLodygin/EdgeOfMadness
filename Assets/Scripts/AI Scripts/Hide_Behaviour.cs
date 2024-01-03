@@ -1,6 +1,8 @@
+using NUnit.Framework;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using System.Collections.Generic;
 using static UnityEngine.GraphicsBuffer;
 
 public class Hide_Behaviour : StateMachineBehaviour
@@ -12,7 +14,6 @@ public class Hide_Behaviour : StateMachineBehaviour
     public float updateFrequency = 0.1f;
     private Collider[] colliders = new Collider[10];
     private Vector3 playerPosition; // 
-
 
 
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
@@ -50,45 +51,47 @@ public class Hide_Behaviour : StateMachineBehaviour
 
         // Сортировка массива Colliders для приоритизации мест для спрятывания
         System.Array.Sort(colliders, ColliderArraySortComparer);
-
         // Попытка найти подходящее место для спрятывания
         for (int i = 0; i < hits; i++)
         {
             // Попытка найти ближайшую точку на NavMesh к объекту
-            if (NavMesh.SamplePosition(colliders[i].transform.position, out NavMeshHit hit, 15f, agent.areaMask))
+            if (NavMesh.SamplePosition(colliders[i].transform.position, out NavMeshHit hit, 7f, agent.areaMask))
             {
-                // Попытка найти ближайший к объекту край NavMesh
-                if (!NavMesh.FindClosestEdge(hit.position, out hit, agent.areaMask))
+                if (colliders[i].gameObject.tag != "wall")
                 {
-                   Debug.LogError($"Unable to find edge close to {hit.position}");
-                }
-
-                // Проверка направления края относительно вектора к цели
-                if (Vector3.Dot(hit.normal, (player.position - hit.position).normalized) < 0)
-                {
-                    // Установка найденной точки как новой цели для NavMeshAgent
-                    //animator.SetBool("IsHiding", true);
-                    agent.SetDestination(hit.position);
-                    break;
-                }
-                else
-                {
-                    // Если предыдущая точка не подходит, пробуем с другой стороны объекта
-                    if (NavMesh.SamplePosition(colliders[i].transform.position - (player.position - hit.position).normalized * 2, out NavMeshHit hit2, 15f, agent.areaMask))
+                    // Попытка найти ближайший к объекту край NavMesh
+                    if (!NavMesh.FindClosestEdge(hit.position, out hit, agent.areaMask))
                     {
-                        // Попытка найти ближайший к объекту край NavMesh (вторая попытка)
-                        if (!NavMesh.FindClosestEdge(hit2.position, out hit2, agent.areaMask))
-                        {
-                            Debug.LogError($"Unable to find edge close to {hit2.position} (second attempt)");
-                        }
+                        Debug.LogError($"Unable to find edge close to {hit.position}");
+                    }
 
-                        // Проверка направления края относительно вектора к цели
-                        if (Vector3.Dot(hit2.normal, (player.position - hit2.position).normalized) < 0)
+                    // Проверка направления края относительно вектора к цели
+                    if (Vector3.Dot(hit.normal, (player.position - hit.position).normalized) < 0)
+                    {
+                        // Установка найденной точки как новой цели для NavMeshAgent
+                        animator.SetBool("IsHiding", true);
+                        agent.SetDestination(hit.position);
+                        break;
+                    }
+                    else
+                    {
+                        // Если предыдущая точка не подходит, пробуем с другой стороны объекта
+                        if (NavMesh.SamplePosition(colliders[i].transform.position - (player.position - hit.position).normalized * 2, out NavMeshHit hit2, 15f, agent.areaMask))
                         {
-                            // Установка найденной точки как новой цели для NavMeshAgent
-                            //animator.SetBool("IsHiding", true);
-                            agent.SetDestination(hit2.position);
-                            break;
+                            // Попытка найти ближайший к объекту край NavMesh (вторая попытка)
+                            if (!NavMesh.FindClosestEdge(hit2.position, out hit2, agent.areaMask))
+                            {
+                                Debug.LogError($"Unable to find edge close to {hit2.position} (second attempt)");
+                            }
+
+                            // Проверка направления края относительно вектора к цели
+                            if (Vector3.Dot(hit2.normal, (player.position - hit2.position).normalized) < 0)
+                            {
+                                // Установка найденной точки как новой цели для NavMeshAgent
+                                animator.SetBool("IsHiding", true);
+                                agent.SetDestination(hit2.position);
+                                break;
+                            }
                         }
                     }
                 }
@@ -99,6 +102,10 @@ public class Hide_Behaviour : StateMachineBehaviour
             }
         }
 
+        if (!animator.GetBool("IsHiding"))
+        {
+            animator.SetBool("IsAttacking", true);
+        }
 
     }
     public int ColliderArraySortComparer(Collider A, Collider B)

@@ -14,7 +14,7 @@ public class EnemyHealth : MonoBehaviour
 
         if (timer>10 && !flag)
         {
-            TakeDamage(60);
+            //TakeDamage(60);
             timer = 0;
             flag = true;
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
 
 
 public class PatrolBehavior : StateMachineBehaviour
@@ -26,7 +27,7 @@ public class PatrolBehavior : StateMachineBehaviour
 
         // Устанавливаем центральную точку патрулирования в начальную позицию бота
         
-        //centerPointPatrol = agent.transform.position;
+        centerPointPatrol = agent.transform.position;
 
         // Проверяем, активен ли и включен ли бот на навигационной сетке
         if (agent.isActiveAndEnabled && agent.isOnNavMesh)
@@ -88,10 +89,11 @@ public class PatrolBehavior : StateMachineBehaviour
             //Это альфа реализация обнаружения по звуку
             if (distance < longChaseRange)
             {
+
                 bool isRunning = Keyboard.current[Key.LeftShift].isPressed;
                 bool isMovingForward_W = Keyboard.current[Key.W].isPressed;
                 bool isMovingForward_Arrow = Keyboard.current[Key.UpArrow].isPressed;
-                if (isRunning && (isMovingForward_W || isMovingForward_Arrow) ) 
+                if (player.GetComponent<InputManager>().Run)
                 {
                     animator.SetBool("IsChasing", true);
                 }

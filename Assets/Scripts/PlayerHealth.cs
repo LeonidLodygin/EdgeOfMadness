@@ -18,8 +18,8 @@ public class Health : MonoBehaviour
         health -= amount;
 
         // Запускаем корутину ShowBlood для отображения эффекта крови при получении урона
-        StartCoroutine(ShowBlood()); 
-        
+        //StartCoroutine(ShowBlood()); 
+    
         // Если здоровье меньше нуля, то умираем) 
         if (health <= 0)
         {

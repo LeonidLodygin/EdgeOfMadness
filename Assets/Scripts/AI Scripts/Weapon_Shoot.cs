@@ -5,8 +5,6 @@ using UnityEngine.VFX;
 
 public class Weapon_Shoot : MonoBehaviour
 {
-    //public ParticleSystem _particleSystem; // ������� ������ ��� ����������� ������� ��������
-
     //public float range = 100f; 
     
     int impactForce = 3000; // ���� ��� ����������� �� ������ ��� �������� � ����
@@ -36,7 +34,7 @@ public class Weapon_Shoot : MonoBehaviour
         nextTimeToFire += 1 * Time.deltaTime;
 
         // ���������, ������ �� ���������� ������� � ����������� �������� � ��� � ��������� �����
-        if (nextTimeToFire>1.2 && enemyAnimator.GetBool("IsAttacking"))
+        if (nextTimeToFire>1.2)
         {
             nextTimeToFire = 0;  // ���������� ����� �� ���������� ��������
             Shoot(); // �������� ����� ��� ���������� ��������
@@ -54,7 +52,7 @@ public class Weapon_Shoot : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(enemy.transform.position, enemy.transform.forward, out hit))
         {
-            //Debug.Log(hit.transform.name);
+            Debug.Log(hit.transform.name);
 
             // �������� ��������� Health �������, � ������� ����� ���
             Health target = hit.transform.GetComponent<Health>();
@@ -64,7 +62,6 @@ public class Weapon_Shoot : MonoBehaviour
             {
                 // ���������� ������� ����� � �������������� ������� DetectionDemage
                 float damage = DetectionDemage();
-                damage = 0;
                 // �������� ���� ������� Health
                 target.TakeDamage(damage);
             }

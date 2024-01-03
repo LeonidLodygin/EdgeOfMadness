@@ -61,9 +61,9 @@ public class Idle_Behavior : StateMachineBehaviour
 
             // Если бег активирован и одновременно нажата клавиша движения вперед,
             // устанавливаем состояние преследования в true
-            if (isRunning && (isMovingForward_W || isMovingForward_Arrow))
+            if (player.GetComponent<InputManager>().Run)
             {
-                animator.SetBool("IsChasing", true);
+                animator.SetBool("IsChasing", true);              
             }
         }
     }

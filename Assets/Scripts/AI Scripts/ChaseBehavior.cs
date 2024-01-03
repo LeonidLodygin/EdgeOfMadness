@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
 
 
 public class ChaseBehaviour : StateMachineBehaviour
@@ -53,32 +54,27 @@ public class ChaseBehaviour : StateMachineBehaviour
             // Если объект столкнулся и это не игрок, сбросить флаг преследования
             if (!hit.transform.CompareTag("Player"))
             {
-                if (!DetectSound(distance, animator))
+                if (!SoundDetection(distance, animator))
                 {
-                    // Если столкновение не произошло, сбросить флаг преследования
                     animator.SetBool("IsChasing", false);
                 }
             }
         }
         else
         {
-            if (!DetectSound(distance, animator))
-            {
-                // Если столкновение не произошло, сбросить флаг преследования
-                animator.SetBool("IsChasing", false);
-            }
+            // Если столкновение не произошло, сбросить флаг преследования
+            animator.SetBool("IsChasing", false);
         }
     }
 
-    public bool DetectSound(float distance, Animator animator)
+    private bool SoundDetection(float distance, Animator animator)
     {
-        //Это альфа реализация обнаружения по звуку
+        // Проверяем, находится ли игрок в пределах дистанции для распознования по бегу
         if (distance < longChaseRange)
         {
-            bool isRunning = Keyboard.current[Key.LeftShift].isPressed;
-            bool isMovingForward_W = Keyboard.current[Key.W].isPressed;
-            bool isMovingForward_Arrow = Keyboard.current[Key.UpArrow].isPressed;
-            if (isRunning && (isMovingForward_W || isMovingForward_Arrow))
+            // Проверяем, нажата ли клавиша "Shift" (бег), и одновременно нажата ли клавиша движения вперед
+            // устанавливаем состояние преследования в true
+            if (player.GetComponent<InputManager>().Run)
             {
                 return true;
             }
