@@ -4,7 +4,7 @@ using UnityEngine.Rendering.PostProcessing;
 /// <summary>
 /// Implementation of a trigger for a dead body that affects the mental state of the player
 /// </summary>
-public class TriggerTest : MonoBehaviour
+public class TriggerDeadBody : MonoBehaviour
 {
     [SerializeField] private PostProcessVolume volume;
     private LensDistortion lensDistortion;

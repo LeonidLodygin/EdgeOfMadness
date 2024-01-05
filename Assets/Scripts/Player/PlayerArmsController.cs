@@ -144,7 +144,7 @@ public class PlayerArmsController : MonoBehaviour
     private void Aiming()
     {
         var targetPos = new Vector3(-0.04f, -0.045f, 0.1f);
-        var targetRot = new Quaternion(-0.00137547322f,-0.998535872f,0.0443145595f,0.0309934299f);
+        var targetRot = new Quaternion(-0.0014f,-1f,0.045f,0.031f);
         constraint.weight = Mathf.MoveTowards(constraint.weight, inputManager.Aim ? 1 : 0, 0.05f);
         weapon.transform.localPosition =
             Vector3.MoveTowards(weapon.transform.localPosition, inputManager.Aim ? targetPos : originalPos, 0.005f);
