@@ -40,3 +40,29 @@ jobs:
         with:
           name: Test results (${{ matrix.testMode }})
           path: ${{ steps.testRunner.outputs.artifactsPath }}
+  build:
+    needs: testRunner
+    name: Build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Restore Library cache
+        uses: actions/cache@v3
+        with:
+          path: Library
+          key: Library-build-StandaloneWindows64
+          restore-keys: |
+            Library-build-
+            Library-
+      - uses: game-ci/unity-builder@v4
+        with:
+          targetPlatform: StandaloneWindows64
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: build-StandaloneWindows64
+          path: build/StandaloneWindows64
