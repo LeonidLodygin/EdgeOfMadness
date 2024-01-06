@@ -1,71 +1,85 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class ChaseBehaviour : StateMachineBehaviour
 {
-    NavMeshAgent agent; //бот
-    Transform player; //игрок
-    float chaseRange = 17;  // ћаксимальное рассто€ние до начала преследовани€ игрока
-    float attackRange = 10; // –ассто€ние, на котором начинаетс€ атака
+    NavMeshAgent agent; // Bot
+    Transform player; // Player
+    float chaseRange = 17;  // Maximum distance to start chasing the player
+    float attackRange = 10; // Distance at which the attack begins
+    float longChaseRange = 25; // Distance to start chasing the player by sound
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        // ѕолучаем компонент NavMeshAgent, ответственный за управление навигацией бота
+        // Get the NavMeshAgent component responsible for controlling the bot's navigation
         agent = animator.GetComponent<NavMeshAgent>();
 
-        //”величиваем скорость бота во врем€ преследовани€ 
+        // Increase the speed of the bot during chasing
         agent.speed = 3;
 
-        // Ќаходим игровой объект с тегом "Player" и получаем его компонент Transform
+        // Find the game object with the tag "Player" and get its Transform component
         player = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        // ”станавливаем, что бот должен двигатьс€ за игроком 
+        // Set that the bot should move towards the player
         agent.SetDestination(player.position);
-        //¬ычисл€ем рассто€ние между позицией бота и позицией игрока
+        // Calculate the distance between the bot's position and the player's position
         float distance = Vector3.Distance(animator.transform.position, player.position);
 
-        // ѕровер€ем, находитс€ ли игрок в пределах дистанции атаки,
-        // если да, устанавливаем состо€ние атаки в true
-        if (distance < attackRange) 
+        // Check if the player is within the attack distance,
+        // if yes, set the attack state to true
+        if (distance < attackRange)
         {
             animator.SetBool("IsAttacking", true);
         }
 
-        // ѕровер€ем, находитс€ ли игрок в пределах дистанции преследовани€,
-        // если нет, устанавливаем состо€ние преследовани€ в false
+        // Check if the player is within the chasing distance,
+        // if not, set the chasing state to false
         RaycastHit hit;
 
-        // куб создает объем, в котором провер€етс€ наличие столкновений
-        // ≈сли есть успешное столкновение в пределах заданной дистанции (chaseRange), то данные о столкновении
-        // будут записаны в переменную hit
+        // The cube creates a volume in which collisions are checked
+        // If there is a successful collision within the specified distance (chaseRange), the collision data
+        // will be stored in the hit variable
         if (Physics.BoxCast(animator.transform.position, new Vector3(7f, 7f, 7f) / 2f, animator.transform.forward, out hit, Quaternion.identity, chaseRange))
         {
             //Debug.Log(hit.transform.name);
 
-            // ≈сли объект столкнулс€ и это не игрок, сбросить флаг преследовани€
+            // If an object collides and it's not the player, reset the chasing flag
             if (!hit.transform.CompareTag("Player"))
             {
-                animator.SetBool("IsChasing", false);
+                if (!SoundDetection(distance, animator))
+                {
+                    animator.SetBool("IsChasing", false);
+                }
             }
         }
         else
         {
-            // ≈сли столкновение не произошло, сбросить флаг преследовани€
+            // If no collision occurred, reset the chasing flag
             animator.SetBool("IsChasing", false);
         }
     }
 
-    // ћетод при выходе из состо€ни€ погони
+    private bool SoundDetection(float distance, Animator animator)
+    {
+        // Check if the player is within the distance for recognition by running
+        if (distance < longChaseRange)
+        {
+            if (player.GetComponent<InputManager>().Run)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         agent.SetDestination(agent.transform.position);
 
-        //устанавливаем скорость бота 
+        // Set the bot's speed
         agent.speed = 2;
     }
 }

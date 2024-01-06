@@ -1,36 +1,33 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Attack_Behaivior : StateMachineBehaviour
+public class Attack_Behavior : StateMachineBehaviour
 {
-    float attackRange = 10; //рассто€ние, начина€ с которого бот начинает атаку
-    Transform player; //Ќаш главный герой 
+    float attackRange = 10; // The distance from which the bot initiates an attack
+    Transform player; // Our main character 
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        // Ќаходим игровой объект с тегом "Player" и получаем его компонент Transform
+        // Find the game object with the tag "Player" and get its Transform component
         player = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        // Ќаправл€ем взгл€д бота на игрока
+        // Direct the bot's gaze towards the player
         animator.transform.LookAt(player);
-        //бот начинает заваливатьс€ при приближении к нему, так что мы замораживаем его положение
-        animator.transform.eulerAngles = new Vector3(0, animator.transform.eulerAngles.y, 0); 
-        // ¬ычисл€ем рассто€ние между позицией бота и позицией игрока
+        // The bot starts leaning when approached, so we freeze its position
+        animator.transform.eulerAngles = new Vector3(0, animator.transform.eulerAngles.y, 0);
+        // Calculate the distance between the bot's position and the player's position
         float distance = Vector3.Distance(animator.transform.position, player.position);
-    
-        if (distance > attackRange) 
+        if (distance > attackRange)
         {
-            // ≈сли рассто€ние больше attackRange, устанавливаем состо€ние атаки в false
+            // If the distance is greater than attackRange, set the attack state to false
             animator.SetBool("IsAttacking", false);
         }
     }
 
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        
+
     }
 }
