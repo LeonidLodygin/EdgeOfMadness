@@ -16,6 +16,7 @@ public class TriggerDeadBody : MonoBehaviour
     /// <param name="other"></param>
     private void OnTriggerStay(Collider other)
     {
+        if(!other.CompareTag("Player")) return;
         if (GetComponent<Renderer>().isVisible)
         {
             volume.enabled = true;
@@ -37,6 +38,7 @@ public class TriggerDeadBody : MonoBehaviour
     /// <param name="other"></param>
     private void OnTriggerExit(Collider other)
     {
+        if(!other.CompareTag("Player")) return;
         volume.enabled = false;
     }
 }
